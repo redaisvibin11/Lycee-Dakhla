@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Assistant IA et informations sur le Lycée Dakhla de Boujniba."
+    />
+    <title>Lycée Dakhla</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <ul class="nav-bar">
+        <li>
+          <button class="navBtn" data-target="overview-section">Aperçu</button>
+        </li>
+        <li>
+          <button class="navBtn" data-target="chatbot-section">Najm</button>
+        </li>
+      </ul>
+    </nav>
+    <div id="overview-section" class="overview">
+      Notre lycée qualifiant de Boujniba est un établissement secondaire qui
+      prépare les élèves au baccalauréat et à la suite de leur parcours, que ce
+      soit l'université, une filière technique ou la vie active. Derrière ses
+      murs de pierre, les élèves de Boujniba et des environs trouvent un lieu
+      pour apprendre, grandir et viser haut. L'établissement est fier des
+      résultats de ses élèves de 2<sup>e</sup> année du baccalauréat, qui se
+      distinguent au sein de la région Béni Mellal-Khénifra . Ces résultats sont
+      le fruit du travail quotidien des enseignants et de la détermination des
+      élèves. Ce site a été créé pour partager cet esprit, répondre aux
+      questions sur la vie du lycée et, bientôt, mettre en valeur les projets
+      des élèves.
+    </div>
+    <div id="chatbot-section" class="chatbot">
+      <h2>Voici Najm, notre assistant IA.</h2>
+      <div id="chatBox">
+        <div class="chat-head">
+          <span>Najm</span>
+          <button
+            id="collapseBtn"
+            class="collapse"
+            aria-label="Réduire"
+          ></button>
+        </div>
+        <div id="messages" role="log" aria-live="polite">
+          <div class="message najm welcome">
+            Salut, je suis Najm, l'assistant IA du lycée. Que veux-tu
+            savoir&nbsp;?
+          </div>
+        </div>
+        <div
+          id="typing"
+          class="typing"
+          role="status"
+          aria-label="Najm réfléchit"
+          hidden
+        >
+          <span></span><span></span><span></span>
+        </div>
+        <div class="composer">
+          <label for="inputBox" class="sr-only">Najm</label>
+          <textarea
+            id="inputBox"
+            rows="1"
+            placeholder="Demande à Najm"
+          ></textarea>
+          <button id="submBtn" class="submit" aria-label="Envoyer"></button>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
