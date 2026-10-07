@@ -57,7 +57,7 @@ def answer():
                     yield chunk.text
         except Exception:
             app.logger.exception("Gemini streaming failed")
-            yield "Najm est indisponible pour le moment. Réessaie dans un instant."
+            yield "Najm est incapable de répondre à cette question."
 
     return Response(generate(), mimetype="text/plain")
 
