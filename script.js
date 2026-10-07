@@ -1,4 +1,3 @@
-// --- Navigation ---
 document.querySelectorAll(".navBtn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const target = document.getElementById(btn.dataset.target);
@@ -6,7 +5,6 @@ document.querySelectorAll(".navBtn").forEach((btn) => {
   });
 });
 
-// --- Chat Window Toggle ---
 const chatBox = document.getElementById("chatBox");
 const collapseBtn = document.getElementById("collapseBtn");
 
@@ -31,7 +29,6 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeChat();
 });
 
-// --- Najm AI Chat & Streaming ---
 const input = document.getElementById("inputBox");
 const submit = document.getElementById("submBtn");
 const messages = document.getElementById("messages");
@@ -56,6 +53,39 @@ async function askNajm() {
   typing.hidden = false;
 
   let bubble = null;
+  let charQueue = [];
+  let isTyping = false;
+  let streamFinished = false;
+
+  function typeNextChar() {
+    if (charQueue.length > 0) {
+      if (!bubble) {
+        typing.hidden = true;
+        bubble = addMessage("najm", "");
+      }
+      const char = charQueue.shift();
+      bubble.textContent += char;
+      messages.scrollTop = messages.scrollHeight;
+
+      // Speed dynamically adjusts if queue gets long
+      const speed = charQueue.length > 30 ? 10 : 22;
+      setTimeout(typeNextChar, speed);
+    } else if (streamFinished) {
+      isTyping = false;
+      submit.disabled = false;
+      typing.hidden = true;
+    } else {
+      isTyping = false;
+    }
+  }
+
+  function enqueueText(str) {
+    charQueue.push(...str.split(""));
+    if (!isTyping) {
+      isTyping = true;
+      typeNextChar();
+    }
+  }
 
   try {
     const response = await fetch("/api/index", {
@@ -76,21 +106,13 @@ async function askNajm() {
 
       if (done) {
         const remaining = decoder.decode();
-        if (remaining && bubble) {
-          bubble.textContent += remaining;
-          messages.scrollTop = messages.scrollHeight;
-        }
+        if (remaining) enqueueText(remaining);
         break;
       }
 
       const chunk = decoder.decode(value, { stream: true });
       if (chunk) {
-        if (!bubble) {
-          typing.hidden = true;
-          bubble = addMessage("najm", "");
-        }
-        bubble.textContent += chunk;
-        messages.scrollTop = messages.scrollHeight;
+        enqueueText(chunk);
       }
     }
   } catch (err) {
@@ -101,11 +123,14 @@ async function askNajm() {
         "Impossible de joindre le serveur. Vérifie ta connexion.",
       );
     } else {
-      bubble.textContent += "\n[Connexion interrompue]";
+      enqueueText("\n[Connexion interrompue]");
     }
   } finally {
-    submit.disabled = false;
-    typing.hidden = true;
+    streamFinished = true;
+    if (!isTyping) {
+      submit.disabled = false;
+      typing.hidden = true;
+    }
   }
 }
 
