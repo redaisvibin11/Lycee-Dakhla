@@ -68,7 +68,7 @@ async function askNajm() {
       messages.scrollTop = messages.scrollHeight;
 
       // Slower pace: 120ms per character (scales down to 60ms if queue backs up)
-      const speed = Math.max(60, 120 - charQueue.length * 2);
+      const speed = Math.max(60, 200 - charQueue.length * 2);
       setTimeout(typeNextChar, speed);
     } else if (streamFinished) {
       isTyping = false;
