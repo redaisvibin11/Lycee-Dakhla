@@ -5,7 +5,7 @@ from google.genai import types
 
 app = Flask(__name__)
 
-MODEL = "gemini-3.6-flash"
+MODEL = "gemini-2.5-flash"
 _client = None
 
 SCHOOL_FACTS = """
@@ -45,7 +45,7 @@ def get_client():
 @app.route("/api/index", methods=["POST"])
 def answer():
     data = request.get_json(silent=True) or {}
-    text = (data.get() or "").strip
+    text = (data.get("text") or "").strip()
     if not text:
         return jsonify({"error": "Écris d'abord une question pour Najm."}), 400
     try:
