@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify, request
+from flask import Flask, Response, jsonify, request
 from google import genai
 from google.genai import types
 
@@ -32,7 +32,6 @@ School facts:
 
 
 def get_client():
-    """Create the Gemini client lazily so a missing key doesn't crash cold start."""
     global _client
     if _client is None:
         api_key = os.environ.get("GEMINI_API_KEY")
@@ -48,32 +47,23 @@ def answer():
     text = (data.get("text") or "").strip()
     if not text:
         return jsonify({"error": "Écris d'abord une question pour Najm."}), 400
-    try:
-        client = get_client()
-        result = client.models.generate_content(
-            model=MODEL,
-            contents=text,
-            config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
-        )
-        reply = (result.text or "").strip()
-    except Exception:
-        app.logger.exception("Gemini request failed")
-        return (
-            jsonify(
-                {
-                    "error": "Najm est indisponible pour le moment. Réessaie dans un instant."
-                }
-            ),
-            500,
-        )
-    if not reply:
-        return (
-            jsonify(
-                {"error": "Najm n'a pas pu répondre. Essaie de reformuler ta question."}
-            ),
-            502,
-        )
-    return jsonify({"answer": reply})
+
+    def generate():
+        try:
+            client = get_client()
+            response_stream = client.models.generate_content_stream(
+                model=MODEL,
+                contents=text,
+                config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
+            )
+            for chunk in response_stream:
+                if chunk.text:
+                    yield chunk.text
+        except Exception:
+            app.logger.exception("Gemini streaming failed")
+            yield "Najm est indisponible pour le moment. Réessaie dans un instant."
+
+    return Response(generate(), mimetype="text/plain")
 
 
 @app.route("/api/index", methods=["GET"])
