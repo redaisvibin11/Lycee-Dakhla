@@ -67,8 +67,8 @@ async function askNajm() {
       bubble.textContent += char;
       messages.scrollTop = messages.scrollHeight;
 
-      // Speed dynamically adjusts if queue gets long
-      const speed = charQueue.length > 30 ? 10 : 22;
+      // Slower pace: 120ms per character (scales down to 60ms if queue backs up)
+      const speed = Math.max(60, 120 - charQueue.length * 2);
       setTimeout(typeNextChar, speed);
     } else if (streamFinished) {
       isTyping = false;
