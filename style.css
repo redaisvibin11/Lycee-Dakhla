@@ -156,25 +156,20 @@ nav {
 }
 
 #chatBox {
-  display: grid;
-  grid-template-rows: auto 0fr auto auto;
-  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 1.25rem;
-  transition: grid-template-rows 0.3s ease;
-}
-
-#chatBox.open {
-  grid-template-rows: auto 1fr auto auto;
+  transition: all 0.3s ease;
 }
 
 .chat-head {
-  grid-row: 1;
   display: none;
   align-items: center;
   justify-content: space-between;
-  padding: 0.25rem 0.25rem 0.25rem 0.75rem;
+  padding: 0.25rem 0.25rem 0.5rem 0.75rem;
   font-family: var(--font-head);
   font-weight: 700;
   color: var(--accent);
@@ -219,22 +214,16 @@ nav {
 }
 
 #messages {
-  grid-row: 2;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  min-height: 0;
   max-height: min(24rem, 60vh);
   max-height: min(24rem, 60dvh);
-  padding-inline: 0.25rem;
-  overflow: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
-
-#chatBox.open #messages {
+  padding: 0.25rem;
   overflow-y: auto;
   overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 
 .message {
@@ -245,18 +234,22 @@ nav {
   overflow-wrap: anywhere;
   white-space: pre-wrap;
   text-wrap: pretty;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .message.welcome {
   white-space: normal;
-}
-
-.message:first-child {
-  margin-top: 0.5rem;
-}
-
-.message:last-child {
-  margin-bottom: 0.75rem;
 }
 
 .message.user {
@@ -274,10 +267,10 @@ nav {
 }
 
 .composer {
-  grid-row: 4;
   display: flex;
   align-items: flex-end;
   gap: 0.5rem;
+  margin-top: 0.5rem;
   padding: 0.4rem 0.4rem 0.4rem 1rem;
   background: var(--bg);
   border: 1px solid var(--border);
@@ -369,11 +362,10 @@ nav {
 }
 
 .typing {
-  grid-row: 3;
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0 1rem 0.75rem;
+  padding: 0.5rem 0.5rem 0.25rem;
 }
 
 .typing[hidden] {
