@@ -5,7 +5,7 @@ from google.genai import types
 
 app = Flask(__name__)
 
-MODEL = "gemini-3.8-flash"
+MODEL = "gemini-2.5-flash"
 _client = None
 
 SCHOOL_FACTS = """
