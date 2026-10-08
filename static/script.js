@@ -40,18 +40,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("selected_lang") || "ar";
   setLanguage(savedLang);
 
+  loadAnnouncements();
+  loadProjects();
+
   const navBtns = document.querySelectorAll(".navBtn");
   navBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
       const targetId = btn.getAttribute("data-target");
+      if (!targetId) return;
+
       const targetSection = document.getElementById(targetId);
-
       if (targetSection) {
+        e.preventDefault();
         targetSection.scrollIntoView({ behavior: "smooth" });
-      }
 
-      navBtns.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
+        navBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+      }
     });
   });
 
@@ -68,6 +73,68 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+function loadAnnouncements() {
+  const container = document.getElementById("announcementsContainer");
+  if (!container) return;
+
+  fetch("/api/announcements")
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data || data.length === 0) {
+        container.innerHTML = `<p class="loading-text">${t("no_announcements")}</p>`;
+        return;
+      }
+      container.innerHTML = data
+        .map(
+          (item) => `
+        <div class="overview-card">
+          ${item.image_url ? `<div class="card-media"><img src="${item.image_url}" alt="${item.title}" /></div>` : ""}
+          <div class="card-content">
+            <h3>${item.title}</h3>
+            <p>${item.content}</p>
+            <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">${item.signature} &bull; ${new Date(item.created_at).toLocaleDateString()}</small>
+          </div>
+        </div>
+      `,
+        )
+        .join("");
+    })
+    .catch(() => {
+      container.innerHTML = `<p class="loading-text">${t("err_network")}</p>`;
+    });
+}
+
+function loadProjects() {
+  const container = document.getElementById("projectsContainer");
+  if (!container) return;
+
+  fetch("/api/projects")
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data || data.length === 0) {
+        container.innerHTML = `<p class="loading-text">${t("no_projects")}</p>`;
+        return;
+      }
+      container.innerHTML = data
+        .map(
+          (item) => `
+        <div class="overview-card">
+          ${item.image_url ? `<div class="card-media"><img src="${item.image_url}" alt="${item.title}" /></div>` : ""}
+          <div class="card-content">
+            <h3>${item.title}</h3>
+            <p><strong>${item.student_name}</strong></p>
+            <p>${item.description}</p>
+          </div>
+        </div>
+      `,
+        )
+        .join("");
+    })
+    .catch(() => {
+      container.innerHTML = `<p class="loading-text">${t("err_network")}</p>`;
+    });
+}
+
 function appendChatMessage(sender, text) {
   const messagesContainer = document.getElementById("messages");
   if (!messagesContainer) return;
@@ -77,6 +144,7 @@ function appendChatMessage(sender, text) {
   msgDiv.textContent = text;
   messagesContainer.appendChild(msgDiv);
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  return msgDiv;
 }
 
 function sendChatMessage() {
@@ -98,21 +166,37 @@ function sendChatMessage() {
     typingEl.removeAttribute("hidden");
   }
 
-  fetch("/api/chat", {
+  fetch("/api/index", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: message }),
+    body: JSON.stringify({ text: message }),
   })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data && data.response) {
-        appendChatMessage("najm", data.response);
-      } else {
-        appendChatMessage("najm", t("err_generic"));
+    .then(async (res) => {
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || t("err_generic"));
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let botMsgDiv = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        if (!botMsgDiv) {
+          botMsgDiv = appendChatMessage("najm", chunk);
+        } else {
+          botMsgDiv.textContent += chunk;
+          const container = document.getElementById("messages");
+          if (container) container.scrollTop = container.scrollHeight;
+        }
       }
     })
-    .catch(() => {
-      appendChatMessage("najm", t("err_network"));
+    .catch((err) => {
+      appendChatMessage("najm", err.message || t("err_network"));
     })
     .finally(() => {
       if (typingEl) typingEl.setAttribute("hidden", "true");
