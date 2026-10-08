@@ -7,102 +7,95 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <nav>
-      <div class="nav-spacer"></div>
-      <ul class="nav-bar">
-        <li><a href="/" class="navBtn">Voir le site public</a></li>
-        <li>
-          <a href="/admin/logout" class="navBtn logout-text">Déconnexion</a>
-        </li>
-      </ul>
-      <div class="nav-right">
+    <header class="floating-nav-wrapper">
+      <nav class="floating-nav">
+        <a href="/" class="nav-item">Voir le site public</a>
+        <a href="/admin/logout" class="nav-btn btn-logout">Déconnexion</a>
         <span class="user-badge">{{ user }}</span>
+      </nav>
+    </header>
+
+    <main class="main-content">
+      <div class="admin-container">
+        <h1 class="section-title">Panneau d'Administration</h1>
+
+        <section class="admin-section">
+          <h2>Gestion des Annonces</h2>
+          <div class="admin-grid">
+            <button type="button" class="create-post-card" id="openAnnModal">
+              <div class="plus-icon">+</div>
+              <span>Nouvelle Annonce</span>
+            </button>
+
+            {% for item in announcements %}
+            <div class="overview-card">
+              <span class="card-date">{{ item.created_at }}</span>
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.content }}</p>
+              <span class="card-sig">— {{ item.signature }}</span>
+              <form
+                action="/api/admin/announcements/delete/{{ item.id }}"
+                method="POST"
+              >
+                <button type="submit" class="delete-btn">Supprimer</button>
+              </form>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="admin-section">
+          <h2>Gestion de la Galerie des Projets</h2>
+          <div class="admin-grid">
+            <button type="button" class="create-post-card" id="openProjModal">
+              <div class="plus-icon">+</div>
+              <span>Nouveau Projet</span>
+            </button>
+
+            {% for proj in projects %}
+            <div class="overview-card">
+              <h3>{{ proj.title }}</h3>
+              <p class="student-tag">Par : {{ proj.student_name }}</p>
+              <p>{{ proj.description }}</p>
+              <form
+                action="/api/admin/projects/delete/{{ proj.id }}"
+                method="POST"
+              >
+                <button type="submit" class="delete-btn">Supprimer</button>
+              </form>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="admin-section">
+          <h2>Journal de Sécurité (Audit Logs)</h2>
+          <div class="overview-card">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>Compte</th>
+                  <th>Statut</th>
+                  <th>Adresse IP</th>
+                  <th>Date & Heure</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for log in logs %}
+                <tr>
+                  <td>{{ log.email }}</td>
+                  <td class="{{ log.status.lower() }}">{{ log.status }}</td>
+                  <td>{{ log.ip_address }}</td>
+                  <td>{{ log.timestamp }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
-    </nav>
+    </main>
 
-    <div class="admin-container">
-      <h1 class="section-title">Panneau d'Administration</h1>
-
-      <!-- Section 1: Announcements Management -->
-      <section class="admin-section">
-        <h2>Gestion des Annonces</h2>
-        <div class="admin-grid">
-          <button type="button" class="create-post-card" id="openAnnModal">
-            <div class="plus-icon">+</div>
-            <span>Nouvelle Annonce</span>
-          </button>
-
-          {% for item in announcements %}
-          <div class="overview-card">
-            <span class="card-date">{{ item.created_at }}</span>
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.content }}</p>
-            <span class="card-sig">— {{ item.signature }}</span>
-            <form
-              action="/api/admin/announcements/delete/{{ item.id }}"
-              method="POST"
-            >
-              <button type="submit" class="delete-btn">Supprimer</button>
-            </form>
-          </div>
-          {% endfor %}
-        </div>
-      </section>
-
-      <!-- Section 2: Projects Gallery Management -->
-      <section class="admin-section">
-        <h2>Gestion de la Galerie des Projets</h2>
-        <div class="admin-grid">
-          <button type="button" class="create-post-card" id="openProjModal">
-            <div class="plus-icon">+</div>
-            <span>Nouveau Projet</span>
-          </button>
-
-          {% for proj in projects %}
-          <div class="overview-card">
-            <h3>{{ proj.title }}</h3>
-            <p class="student-tag">Par : {{ proj.student_name }}</p>
-            <p>{{ proj.description }}</p>
-            <form
-              action="/api/admin/projects/delete/{{ proj.id }}"
-              method="POST"
-            >
-              <button type="submit" class="delete-btn">Supprimer</button>
-            </form>
-          </div>
-          {% endfor %}
-        </div>
-      </section>
-
-      <!-- Section 3: Audit Logs -->
-      <section class="admin-section">
-        <h2>Journal de Sécurité (Audit Logs)</h2>
-        <div class="overview-card">
-          <table class="audit-table">
-            <thead>
-              <tr>
-                <th>Compte</th>
-                <th>Statut</th>
-                <th>Adresse IP</th>
-                <th>Date & Heure</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for log in logs %}
-              <tr>
-                <td>{{ log.email }}</td>
-                <td class="{{ log.status.lower() }}">{{ log.status }}</td>
-                <td>{{ log.ip_address }}</td>
-                <td>{{ log.timestamp }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </div>
-
-    <!-- Announcement Modal Form -->
     <div id="annModal" class="modal-overlay" hidden>
       <div class="modal-card">
         <h2>Publier une Annonce</h2>
@@ -138,7 +131,6 @@
       </div>
     </div>
 
-    <!-- Project Modal Form -->
     <div id="projModal" class="modal-overlay" hidden>
       <div class="modal-card">
         <h2>Ajouter un Projet d'Élève</h2>

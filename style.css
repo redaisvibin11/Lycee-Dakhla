@@ -139,6 +139,15 @@ h3 {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
+.user-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(31, 77, 92, 0.1);
+  padding: 6px 12px;
+  border-radius: 10px;
+}
+
 .main-content {
   padding-top: 100px;
 }
@@ -218,6 +227,149 @@ h3 {
   font-size: 0.85rem;
   color: var(--accent);
   margin: 0;
+}
+
+.admin-section {
+  margin-bottom: 2.5rem;
+}
+
+.admin-section h2 {
+  font-size: 1.25rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.create-post-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  background: rgba(42, 29, 22, 0.04);
+  border: 2px dashed var(--border);
+  border-radius: 1.25rem;
+  color: var(--primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.create-post-card:hover {
+  background: rgba(168, 70, 42, 0.08);
+  border-color: var(--primary);
+}
+
+.plus-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 30rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.85rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.btn-prim {
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-sec {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: #d9534f;
+  color: #fff;
+  border: 0;
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.35rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.audit-table th,
+.audit-table td {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.audit-table .success {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.audit-table .unauthorized {
+  color: #d32f2f;
+  font-weight: bold;
 }
 
 .chatbot h2 {
