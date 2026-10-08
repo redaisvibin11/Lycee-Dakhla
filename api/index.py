@@ -223,3 +223,62 @@ Annonces récentes:
 
 if __name__ == "__main__":
     app.run(port=7860, debug=True)
+
+
+@app.route("/api/index", methods=["POST"])
+def answer():
+    from google import genai
+    from google.genai import types
+
+    data = request.get_json(silent=True) or {}
+    text = (data.get("text") or "").strip()
+    if not text:
+        return jsonify({"error": "Écris d'abord une question."}), 400
+
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return jsonify({"error": "Clé API non configurée."}), 500
+
+    client = genai.Client(api_key=api_key)
+    announcements = db.get_announcements(limit=3)
+    ann_text = (
+        "\n".join(
+            [
+                f"- [{a['created_at']}] {a['title']}: {a['content']}"
+                for a in announcements
+            ]
+        )
+        if announcements
+        else "Aucune annonce récente."
+    )
+
+    system_prompt = f"""You are Najm, the friendly AI assistant for Lycée Dakhla in Boujniba, Morocco.
+
+Annonces récentes:
+{ann_text}
+"""
+
+    client_ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+
+    def generate():
+        full_response = []
+        try:
+            response_stream = client.models.generate_content_stream(
+                model="gemini-3.6-flash",
+                contents=text,
+                config=types.GenerateContentConfig(system_instruction=system_prompt),
+            )
+            for chunk in response_stream:
+                if chunk.text:
+                    full_response.append(chunk.text)
+                    yield chunk.text
+        except Exception:
+            err_msg = "Najm est incapable de répondre à cette question."
+            full_response.append(err_msg)
+            yield err_msg
+        finally:
+            complete_bot_text = "".join(full_response)
+            if complete_bot_text:
+                db.log_chat(text, complete_bot_text, client_ip)
+
+    return Response(generate(), mimetype="text/plain")
