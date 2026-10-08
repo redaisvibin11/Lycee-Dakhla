@@ -1,3 +1,16 @@
+function setLanguage(lang) {
+  if (typeof translations === "undefined" || !translations[lang]) return;
+
+  // Reload only when the user actually switches language
+  const previous = localStorage.getItem("selected_lang") || "ar";
+  if (previous !== lang) {
+    localStorage.setItem("selected_lang", lang);
+    location.reload();
+    return;
+  }
+
+  // ...the rest of your function stays exactly the same
+  // (document.documentElement.lang = lang; and everything below it)
 function t(key) {
   const lang = localStorage.getItem("selected_lang") || "ar";
   return (translations[lang] && translations[lang][key]) || key;
