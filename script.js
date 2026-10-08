@@ -5,6 +5,81 @@ document.querySelectorAll(".navBtn").forEach((btn) => {
   });
 });
 
+// --- Dynamic Announcements Loader ---
+async function loadAnnouncements() {
+  const container = document.getElementById("announcementsContainer");
+  if (!container) return;
+
+  try {
+    const res = await fetch("/api/announcements");
+    const data = await res.json();
+
+    if (!data.length) {
+      container.innerHTML =
+        "<p class='empty-text'>Aucune annonce publique pour le moment.</p>";
+      return;
+    }
+
+    container.innerHTML = data
+      .map(
+        (item) => `
+      <div class="overview-card">
+        ${item.image_url ? `<div class="card-media"><img src="${item.image_url}" alt="Cover" /></div>` : ""}
+        <div class="card-content">
+          <span class="card-date">${item.created_at}</span>
+          <h3>${item.title}</h3>
+          <p>${item.content}</p>
+          <span class="card-sig">— ${item.signature}</span>
+        </div>
+      </div>
+    `,
+      )
+      .join("");
+  } catch (e) {
+    container.innerHTML =
+      "<p class='error-text'>Erreur de chargement des annonces.</p>";
+  }
+}
+
+// --- Dynamic Projects Loader ---
+async function loadProjects() {
+  const container = document.getElementById("projectsContainer");
+  if (!container) return;
+
+  try {
+    const res = await fetch("/api/projects");
+    const data = await res.json();
+
+    if (!data.length) {
+      container.innerHTML =
+        "<p class='empty-text'>Aucun projet publié pour le moment.</p>";
+      return;
+    }
+
+    container.innerHTML = data
+      .map(
+        (item) => `
+      <div class="overview-card">
+        ${item.image_url ? `<div class="card-media"><img src="${item.image_url}" alt="Project Image" /></div>` : ""}
+        <div class="card-content">
+          <h3>${item.title}</h3>
+          <p class="student-tag">Par : <strong>${item.student_name}</strong></p>
+          <p>${item.description}</p>
+        </div>
+      </div>
+    `,
+      )
+      .join("");
+  } catch (e) {
+    container.innerHTML =
+      "<p class='error-text'>Erreur de chargement des projets.</p>";
+  }
+}
+
+loadAnnouncements();
+loadProjects();
+
+// --- Najm Chatbot Logic ---
 const chatBox = document.getElementById("chatBox");
 const collapseBtn = document.getElementById("collapseBtn");
 
@@ -23,10 +98,6 @@ collapseBtn.addEventListener("click", (e) => {
 
 document.addEventListener("click", (e) => {
   if (!chatBox.contains(e.target)) closeChat();
-});
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeChat();
 });
 
 const input = document.getElementById("inputBox");
@@ -66,10 +137,7 @@ async function askNajm() {
       const char = charQueue.shift();
       bubble.textContent += char;
       messages.scrollTop = messages.scrollHeight;
-
-      // Slower pace: 120ms per character (scales down to 60ms if queue backs up)
-      const speed = Math.max(40, 40 - charQueue.length * 2);
-      setTimeout(typeNextChar, speed);
+      setTimeout(typeNextChar, Math.max(40, 40 - charQueue.length * 2));
     } else if (streamFinished) {
       isTyping = false;
       submit.disabled = false;
@@ -94,29 +162,22 @@ async function askNajm() {
       body: JSON.stringify({ text }),
     });
 
-    if (!response.ok) {
-      throw new Error(`Server status ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`Server status ${response.status}`);
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
 
     while (true) {
       const { done, value } = await reader.read();
-
       if (done) {
         const remaining = decoder.decode();
         if (remaining) enqueueText(remaining);
         break;
       }
-
       const chunk = decoder.decode(value, { stream: true });
-      if (chunk) {
-        enqueueText(chunk);
-      }
+      if (chunk) enqueueText(chunk);
     }
   } catch (err) {
-    console.error("askNajm failed:", err);
     if (!bubble) {
       addMessage(
         "najm",
@@ -135,7 +196,6 @@ async function askNajm() {
 }
 
 submit.addEventListener("click", askNajm);
-
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();

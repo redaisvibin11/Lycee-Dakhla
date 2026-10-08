@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administration - Lycée Dakhla</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav-spacer"></div>
+      <ul class="nav-bar">
+        <li><a href="/" class="navBtn">Voir le site public</a></li>
+        <li>
+          <a href="/admin/logout" class="navBtn logout-text">Déconnexion</a>
+        </li>
+      </ul>
+      <div class="nav-right">
+        <span class="user-badge">{{ user }}</span>
+      </div>
+    </nav>
+
+    <div class="admin-container">
+      <h1 class="section-title">Panneau d'Administration</h1>
+
+      <!-- Section 1: Announcements Management -->
+      <section class="admin-section">
+        <h2>Gestion des Annonces</h2>
+        <div class="admin-grid">
+          <button type="button" class="create-post-card" id="openAnnModal">
+            <div class="plus-icon">+</div>
+            <span>Nouvelle Annonce</span>
+          </button>
+
+          {% for item in announcements %}
+          <div class="overview-card">
+            <span class="card-date">{{ item.created_at }}</span>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.content }}</p>
+            <span class="card-sig">— {{ item.signature }}</span>
+            <form
+              action="/api/admin/announcements/delete/{{ item.id }}"
+              method="POST"
+            >
+              <button type="submit" class="delete-btn">Supprimer</button>
+            </form>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- Section 2: Projects Gallery Management -->
+      <section class="admin-section">
+        <h2>Gestion de la Galerie des Projets</h2>
+        <div class="admin-grid">
+          <button type="button" class="create-post-card" id="openProjModal">
+            <div class="plus-icon">+</div>
+            <span>Nouveau Projet</span>
+          </button>
+
+          {% for proj in projects %}
+          <div class="overview-card">
+            <h3>{{ proj.title }}</h3>
+            <p class="student-tag">Par : {{ proj.student_name }}</p>
+            <p>{{ proj.description }}</p>
+            <form
+              action="/api/admin/projects/delete/{{ proj.id }}"
+              method="POST"
+            >
+              <button type="submit" class="delete-btn">Supprimer</button>
+            </form>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- Section 3: Audit Logs -->
+      <section class="admin-section">
+        <h2>Journal de Sécurité (Audit Logs)</h2>
+        <div class="overview-card">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>Compte</th>
+                <th>Statut</th>
+                <th>Adresse IP</th>
+                <th>Date & Heure</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for log in logs %}
+              <tr>
+                <td>{{ log.email }}</td>
+                <td class="{{ log.status.lower() }}">{{ log.status }}</td>
+                <td>{{ log.ip_address }}</td>
+                <td>{{ log.timestamp }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- Announcement Modal Form -->
+    <div id="annModal" class="modal-overlay" hidden>
+      <div class="modal-card">
+        <h2>Publier une Annonce</h2>
+        <form action="/api/admin/announcements/new" method="POST">
+          <div class="form-group">
+            <label>Titre</label>
+            <input
+              type="text"
+              name="title"
+              required
+              placeholder="ex: Absence d'enseignant"
+            />
+          </div>
+          <div class="form-group">
+            <label>Signature</label>
+            <input type="text" name="signature" value="Le Proviseur" required />
+          </div>
+          <div class="form-group">
+            <label>Image de couverture URL (Optionnel)</label>
+            <input type="url" name="image_url" placeholder="https://..." />
+          </div>
+          <div class="form-group">
+            <label>Contenu</label>
+            <textarea name="content" rows="4" required></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-sec" onclick="closeModals()">
+              Annuler
+            </button>
+            <button type="submit" class="btn-prim">Publier</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Project Modal Form -->
+    <div id="projModal" class="modal-overlay" hidden>
+      <div class="modal-card">
+        <h2>Ajouter un Projet d'Élève</h2>
+        <form action="/api/admin/projects/new" method="POST">
+          <div class="form-group">
+            <label>Titre du Projet</label>
+            <input
+              type="text"
+              name="title"
+              required
+              placeholder="ex: Robot Suiveur de Ligne"
+            />
+          </div>
+          <div class="form-group">
+            <label>Nom de l'élève / Groupe</label>
+            <input
+              type="text"
+              name="student_name"
+              required
+              placeholder="ex: Amine & Youssef (2BAC)"
+            />
+          </div>
+          <div class="form-group">
+            <label>Image du projet URL (Optionnel)</label>
+            <input type="url" name="image_url" placeholder="https://..." />
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" rows="4" required></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-sec" onclick="closeModals()">
+              Annuler
+            </button>
+            <button type="submit" class="btn-prim">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const annModal = document.getElementById("annModal");
+      const projModal = document.getElementById("projModal");
+
+      document.getElementById("openAnnModal").onclick = () =>
+        annModal.removeAttribute("hidden");
+      document.getElementById("openProjModal").onclick = () =>
+        projModal.removeAttribute("hidden");
+
+      function closeModals() {
+        annModal.setAttribute("hidden", "");
+        projModal.setAttribute("hidden", "");
+      }
+    </script>
+  </body>
+</html>

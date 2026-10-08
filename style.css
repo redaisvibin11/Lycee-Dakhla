@@ -46,52 +46,14 @@ body {
 }
 
 h1,
-h2 {
+h2,
+h3 {
   font-family: var(--font-head);
   line-height: 1.2;
   margin: 0 0 0.75rem;
 }
 
-.hero {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  gap: 0.5rem;
-  padding: 1.5rem;
-  text-align: center;
-  color: #fff;
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.6)),
-    url("school-front.webp") center / cover no-repeat,
-    linear-gradient(135deg, #c8754a, #8c3f2a);
-  z-index: 0;
-}
-
-.hero h1 {
-  font-size: clamp(2.25rem, 8vw, 4.5rem);
-  margin: 0;
-}
-
-.hero p {
-  margin: 0;
-  font-size: 1.05rem;
-  opacity: 0.9;
-}
-
-.page {
-  position: relative;
-  z-index: 1;
-  background: var(--bg);
-  border-top-left-radius: 50% 3rem;
-  border-top-right-radius: 50% 3rem;
-  overflow: clip;
-  padding-bottom: 4rem;
-}
-
+/* Header & Centered Nav Bar with Top-Right Login */
 nav {
   position: sticky;
   top: 0;
@@ -99,6 +61,14 @@ nav {
   height: var(--nav-h);
   background: var(--bg);
   border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+}
+
+.nav-spacer {
+  width: 120px; /* Equalizes space with right side to keep nav-bar centered */
 }
 
 .nav-bar {
@@ -124,6 +94,9 @@ nav {
   font: inherit;
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 
 @media (hover: hover) {
@@ -138,20 +111,52 @@ nav {
   outline-offset: -4px;
 }
 
+.nav-right {
+  display: flex;
+  justify-content: flex-end;
+  width: 120px;
+}
+
+.login-btn {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+  border: 1px solid var(--primary);
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.login-btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Sections & Cards */
 .overview,
-.chatbot {
+.chatbot,
+.admin-container {
   max-width: 42rem;
   margin: 0 auto;
   padding: 3rem 1.25rem 1rem;
   scroll-margin-top: var(--nav-h);
 }
 
-/* Tinted Smoked Glass Card Style for Aperçu */
+.section-title {
+  color: var(--accent);
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+/* Tinted Smoked Glass Card Style */
 .overview-card {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
   padding: 1.75rem;
+  margin-bottom: 1.25rem;
   background: rgba(42, 29, 22, 0.08);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
@@ -191,6 +196,24 @@ nav {
   line-height: 1.65;
 }
 
+.card-date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.card-sig {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--primary);
+}
+
+.student-tag {
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin: 0;
+}
+
+/* Chatbot Section */
 .chatbot h2 {
   font-size: 1.75rem;
   color: var(--accent);
@@ -440,28 +463,172 @@ nav {
   }
 }
 
-@keyframes fade {
-  0%,
-  100% {
-    opacity: 0.25;
+@media (max-width: 600px) {
+  .nav-spacer {
+    display: none;
   }
-  50% {
-    opacity: 1;
+  .nav-right {
+    width: auto;
   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  #chatBox {
-    transition: none;
-  }
-
-  .typing span {
-    animation-name: fade;
-  }
-}
-
-@media (max-width: 480px) {
   .navBtn {
-    padding: 0 0.75rem;
+    padding: 0 0.5rem;
   }
+}
+/*page admin*/
+.user-badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(31, 77, 92, 0.1);
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.admin-section {
+  margin-bottom: 2.5rem;
+}
+
+.admin-section h2 {
+  font-size: 1.25rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.create-post-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  background: rgba(42, 29, 22, 0.04);
+  border: 2px dashed var(--border);
+  border-radius: 1.25rem;
+  color: var(--primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.create-post-card:hover {
+  background: rgba(168, 70, 42, 0.08);
+  border-color: var(--primary);
+}
+
+.plus-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.logout-text {
+  color: #d9534f !important;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 30rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.85rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.btn-prim {
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-sec {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: #d9534f;
+  color: #fff;
+  border: 0;
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.35rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Audit Table */
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.audit-table th,
+.audit-table td {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.audit-table .success {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.audit-table .unauthorized {
+  color: #d32f2f;
+  font-weight: bold;
 }
