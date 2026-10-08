@@ -1,5 +1,5 @@
 function setLanguage(lang) {
-  if (!translations[lang]) return;
+  if (typeof translations === "undefined" || !translations[lang]) return;
 
   localStorage.setItem("selected_lang", lang);
 
@@ -17,12 +17,34 @@ function setLanguage(lang) {
     }
   });
 
-  document
-    .querySelectorAll(".lang-btn")
-    .forEach((btn) => btn.classList.remove("active"));
+  document.querySelectorAll(".lang-btn").forEach((btn) => {
+    btn.classList.remove("active");
+  });
   const activeBtn = document.getElementById(`btn-${lang}`);
-  if (activeBtn) activeBtn.classList.add("active");
+  if (activeBtn) {
+    activeBtn.classList.add("active");
+  }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const savedLang = localStorage.getItem("selected_lang") || "ar";
+  setLanguage(savedLang);
+
+  const navBtns = document.querySelectorAll(".navBtn");
+  navBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const targetId = btn.getAttribute("data-target");
+      const targetSection = document.getElementById(targetId);
+
+      if (targetSection) {
+        targetSection.scrollIntoView({ behavior: "smooth" });
+      }
+
+      navBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  });
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("selected_lang") || "ar";
