@@ -11,96 +11,95 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <nav>
-      <div class="nav-spacer"></div>
-      <ul class="nav-bar">
-        <li>
-          <button class="navBtn" data-target="overview-section">Aperçu</button>
-        </li>
-        <li>
-          <button class="navBtn" data-target="announcements-section">
-            Annonces
-          </button>
-        </li>
-        <li>
-          <button class="navBtn" data-target="gallery-section">
-            Projets Élèves
-          </button>
-        </li>
-        <li>
-          <button class="navBtn" data-target="chatbot-section">Najm</button>
-        </li>
-      </ul>
-      <div class="nav-right">
-        <a href="/admin/login" class="login-btn">Connexion Admin</a>
-      </div>
-    </nav>
+    <header class="floating-nav-wrapper">
+      <nav class="floating-nav">
+        <button class="nav-item active navBtn" data-target="overview-section">
+          Aperçu
+        </button>
+        <button class="nav-item navBtn" data-target="announcements-section">
+          Annonces
+        </button>
+        <button class="nav-item navBtn" data-target="gallery-section">
+          Projets Élèves
+        </button>
+        <button class="nav-item navBtn" data-target="chatbot-section">
+          Najm
+        </button>
 
-    <div id="overview-section" class="overview">
-      <div class="overview-card">
-        <div class="card-content">
-          Notre lycée qualifiant de Boujniba est un établissement secondaire qui
-          prépare les élèves au baccalauréat et à la suite de leur parcours, que
-          ce soit l'université, une filière technique ou la vie active. Derrière
-          ses murs de pierre, les élèves de Boujniba et des environs trouvent un
-          lieu pour apprendre, grandir et viser haut.
-        </div>
-      </div>
-    </div>
+        {% if user %}
+        <a href="/admin" class="nav-btn btn-admin">Administration</a>
+        <a href="/admin/logout" class="nav-btn btn-logout">Déconnexion</a>
+        {% else %}
+        <a href="/admin/login" class="nav-btn btn-login">Connexion Admin</a>
+        {% endif %}
+      </nav>
+    </header>
 
-    <!-- Live Announcements Section -->
-    <div id="announcements-section" class="overview">
-      <h2 class="section-title">Annonces Officielles</h2>
-      <div id="announcementsContainer" class="feed-grid">
-        <p class="loading-text">Chargement des annonces...</p>
-      </div>
-    </div>
-
-    <!-- Student Projects Gallery Section -->
-    <div id="gallery-section" class="overview">
-      <h2 class="section-title">Galerie des Projets</h2>
-      <div id="projectsContainer" class="feed-grid">
-        <p class="loading-text">Chargement des projets...</p>
-      </div>
-    </div>
-
-    <div id="chatbot-section" class="chatbot">
-      <h2>Voici Najm, notre assistant IA.</h2>
-      <div id="chatBox">
-        <div class="chat-head">
-          <span>Najm</span>
-          <button
-            id="collapseBtn"
-            class="collapse"
-            aria-label="Réduire"
-          ></button>
-        </div>
-        <div id="messages" role="log" aria-live="polite">
-          <div class="message najm welcome">
-            Salut, je suis Najm, l'assistant IA du lycée. Que veux-tu
-            savoir&nbsp;?
+    <main class="main-content">
+      <section id="overview-section" class="overview">
+        <div class="overview-card">
+          <div class="card-content">
+            Notre lycée qualifiant de Boujniba est un établissement secondaire
+            qui prépare les élèves au baccalauréat et à la suite de leur
+            parcours, que ce soit l'université, une filière technique ou la vie
+            active. Derrière ses murs de pierre, les élèves de Boujniba et des
+            environs trouvent un lieu pour apprendre, grandir et viser haut.
           </div>
         </div>
-        <div
-          id="typing"
-          class="typing"
-          role="status"
-          aria-label="Najm réfléchit"
-          hidden
-        >
-          <span></span><span></span><span></span>
+      </section>
+
+      <section id="announcements-section" class="overview">
+        <h2 class="section-title">Annonces Officielles</h2>
+        <div id="announcementsContainer" class="feed-grid">
+          <p class="loading-text">Chargement des annonces...</p>
         </div>
-        <div class="composer">
-          <label for="inputBox" class="sr-only">Najm</label>
-          <textarea
-            id="inputBox"
-            rows="1"
-            placeholder="Demande à Najm"
-          ></textarea>
-          <button id="submBtn" class="submit" aria-label="Envoyer"></button>
+      </section>
+
+      <section id="gallery-section" class="overview">
+        <h2 class="section-title">Galerie des Projets</h2>
+        <div id="projectsContainer" class="feed-grid">
+          <p class="loading-text">Chargement des projets...</p>
         </div>
-      </div>
-    </div>
+      </section>
+
+      <section id="chatbot-section" class="chatbot">
+        <h2>Voici Najm, notre assistant IA.</h2>
+        <div id="chatBox">
+          <div class="chat-head">
+            <span>Najm</span>
+            <button
+              id="collapseBtn"
+              class="collapse"
+              aria-label="Réduire"
+            ></button>
+          </div>
+          <div id="messages" role="log" aria-live="polite">
+            <div class="message najm welcome">
+              Salut, je suis Najm, l'assistant IA du lycée. Que veux-tu
+              savoir&nbsp;?
+            </div>
+          </div>
+          <div
+            id="typing"
+            class="typing"
+            role="status"
+            aria-label="Najm réfléchit"
+            hidden
+          >
+            <span></span><span></span><span></span>
+          </div>
+          <div class="composer">
+            <label for="inputBox" class="sr-only">Najm</label>
+            <textarea
+              id="inputBox"
+              rows="1"
+              placeholder="Demande à Najm"
+            ></textarea>
+            <button id="submBtn" class="submit" aria-label="Envoyer"></button>
+          </div>
+        </div>
+      </section>
+    </main>
 
     <script src="script.js"></script>
   </body>

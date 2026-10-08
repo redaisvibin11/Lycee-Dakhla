@@ -71,7 +71,7 @@ def admin_required(f):
 
 @app.route("/")
 def index_page():
-    return render_template("index.html")
+    return render_template("index.html", user=session.get("user"))
 
 
 @app.route("/api/announcements", methods=["GET"])

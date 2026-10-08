@@ -1,37 +1,3 @@
-async function loadAnnouncements() {
-  const container = document.getElementById("announcements-container");
-  if (!container) return;
-
-  try {
-    const response = await fetch("/api/announcements");
-    const announcements = await response.json();
-
-    if (announcements.length === 0) {
-      container.innerHTML =
-        '<p class="text-muted">Aucune annonce pour le moment.</p>';
-      return;
-    }
-
-    container.innerHTML = announcements
-      .map(
-        (item) => `
-            <div class="announcement-card">
-                <h3>${item.title}</h3>
-                <p>${item.content}</p>
-                ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}">` : ""}
-                <div class="meta">
-                    <span>${item.signature}</span> • <small>${item.created_at}</small>
-                </div>
-            </div>
-        `,
-      )
-      .join("");
-  } catch (err) {
-    console.error("Failed to load announcements:", err);
-  }
-}
-
-document.addEventListener("DOMContentLoaded", loadAnnouncements);
 document.querySelectorAll(".navBtn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const target = document.getElementById(btn.dataset.target);
@@ -39,7 +5,6 @@ document.querySelectorAll(".navBtn").forEach((btn) => {
   });
 });
 
-// --- Dynamic Announcements Loader ---
 async function loadAnnouncements() {
   const container = document.getElementById("announcementsContainer");
   if (!container) return;
@@ -75,7 +40,6 @@ async function loadAnnouncements() {
   }
 }
 
-// --- Dynamic Projects Loader ---
 async function loadProjects() {
   const container = document.getElementById("projectsContainer");
   if (!container) return;
@@ -110,28 +74,33 @@ async function loadProjects() {
   }
 }
 
-loadAnnouncements();
-loadProjects();
+document.addEventListener("DOMContentLoaded", () => {
+  loadAnnouncements();
+  loadProjects();
+});
 
-// --- Najm Chatbot Logic ---
 const chatBox = document.getElementById("chatBox");
 const collapseBtn = document.getElementById("collapseBtn");
 
-const openChat = () => chatBox.classList.add("open");
-const closeChat = () => chatBox.classList.remove("open");
+const openChat = () => chatBox?.classList.add("open");
+const closeChat = () => chatBox?.classList.remove("open");
 
-chatBox.addEventListener("focusin", openChat);
-chatBox.addEventListener("click", (e) => {
-  if (!collapseBtn.contains(e.target)) openChat();
-});
+if (chatBox) {
+  chatBox.addEventListener("focusin", openChat);
+  chatBox.addEventListener("click", (e) => {
+    if (collapseBtn && !collapseBtn.contains(e.target)) openChat();
+  });
+}
 
-collapseBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  closeChat();
-});
+if (collapseBtn) {
+  collapseBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    closeChat();
+  });
+}
 
 document.addEventListener("click", (e) => {
-  if (!chatBox.contains(e.target)) closeChat();
+  if (chatBox && !chatBox.contains(e.target)) closeChat();
 });
 
 const input = document.getElementById("inputBox");
@@ -140,6 +109,7 @@ const messages = document.getElementById("messages");
 const typing = document.getElementById("typing");
 
 function addMessage(role, text) {
+  if (!messages) return null;
   const bubble = document.createElement("div");
   bubble.className = `message ${role}`;
   bubble.textContent = text;
@@ -149,13 +119,14 @@ function addMessage(role, text) {
 }
 
 async function askNajm() {
+  if (!input || !submit) return;
   const text = input.value.trim();
   if (!text || submit.disabled) return;
 
   addMessage("user", text);
   input.value = "";
   submit.disabled = true;
-  typing.hidden = false;
+  if (typing) typing.hidden = false;
 
   let bubble = null;
   let charQueue = [];
@@ -165,17 +136,17 @@ async function askNajm() {
   function typeNextChar() {
     if (charQueue.length > 0) {
       if (!bubble) {
-        typing.hidden = true;
+        if (typing) typing.hidden = true;
         bubble = addMessage("najm", "");
       }
       const char = charQueue.shift();
-      bubble.textContent += char;
-      messages.scrollTop = messages.scrollHeight;
+      if (bubble) bubble.textContent += char;
+      if (messages) messages.scrollTop = messages.scrollHeight;
       setTimeout(typeNextChar, Math.max(40, 40 - charQueue.length * 2));
     } else if (streamFinished) {
       isTyping = false;
       submit.disabled = false;
-      typing.hidden = true;
+      if (typing) typing.hidden = true;
     } else {
       isTyping = false;
     }
@@ -224,15 +195,17 @@ async function askNajm() {
     streamFinished = true;
     if (!isTyping) {
       submit.disabled = false;
-      typing.hidden = true;
+      if (typing) typing.hidden = true;
     }
   }
 }
 
-submit.addEventListener("click", askNajm);
-input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    askNajm();
-  }
-});
+if (submit) submit.addEventListener("click", askNajm);
+if (input) {
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      askNajm();
+    }
+  });
+}
