@@ -26,10 +26,3 @@ CREATE TABLE IF NOT EXISTS projects (
     image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-CREATE TABLE IF NOT EXISTS chat_logs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_message TEXT NOT NULL,
-    bot_response TEXT,
-    ip_address TEXT,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);

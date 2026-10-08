@@ -1,8 +1,17 @@
 {
-  "functions": {
-    "api/index.py": {
-      "includeFiles": "{static/**,api/templates/**,api/schema.sql}"
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "includeFiles": ["index.html", "admin.html", "style.css", "script.js"]
+      }
     }
-  },
-  "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }]
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "api/index.py"
+    }
+  ]
 }

@@ -123,13 +123,3 @@ def get_projects(limit=12):
 def delete_project(project_id):
     query = "DELETE FROM projects WHERE id = ?"
     execute_write(query, (project_id,))
-
-
-def log_chat(user_message, bot_response, ip_address):
-    query = "INSERT INTO chat_logs (user_message, bot_response, ip_address) VALUES (?, ?, ?)"
-    execute_write(query, (user_message, bot_response, ip_address))
-
-
-def get_chat_logs(limit=50):
-    query = "SELECT user_message, bot_response, ip_address, timestamp FROM chat_logs ORDER BY timestamp DESC LIMIT ?"
-    return execute_read(query, (limit,))

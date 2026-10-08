@@ -1,66 +1,155 @@
 <!doctype html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lycée Dakhla - Boujniba</title>
+    <meta
+      name="description"
+      content="منصة التلميذ والمساعد الذكي لثانوية الداخلة التأهيلية ببوجنيبة."
+    />
+    <title>ثانوية الداخلة - Lycée Dakhla</title>
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <header>
-      <nav class="navbar">
-        <div class="logo">Lycée Dakhla</div>
-        <ul class="nav-links">
-          <li><a href="/">Accueil</a></li>
-          <li><a href="#announcements">Annonces</a></li>
-          <li><a href="#projects">Projets</a></li>
-          <li><a href="#chat">Najm AI</a></li>
-          {% if user %}
-          <li><a href="/admin" class="btn-admin">Panneau Admin</a></li>
-          <li><a href="/admin/logout" class="btn-logout">Déconnexion</a></li>
-          {% else %}
-          <li><a href="/admin/login" class="btn-admin">Connexion Admin</a></li>
-          {% endif %}
-        </ul>
+    <header class="floating-nav-wrapper">
+      <nav class="floating-nav">
+        <div class="lang-switcher">
+          <button
+            onclick="setLanguage('ar')"
+            class="lang-btn active"
+            id="btn-ar"
+          >
+            AR
+          </button>
+          <button onclick="setLanguage('fr')" class="lang-btn" id="btn-fr">
+            FR
+          </button>
+          <button onclick="setLanguage('en')" class="lang-btn" id="btn-en">
+            EN
+          </button>
+        </div>
+
+        <button
+          class="nav-item active navBtn"
+          data-target="overview-section"
+          data-i18n="nav_home"
+        >
+          الرئيسية
+        </button>
+        <button
+          class="nav-item navBtn"
+          data-target="announcements-section"
+          data-i18n="nav_announcements"
+        >
+          الإعلانات
+        </button>
+        <button
+          class="nav-item navBtn"
+          data-target="gallery-section"
+          data-i18n="nav_projects"
+        >
+          مشاريع التلاميذ
+        </button>
+        <button
+          class="nav-item navBtn"
+          data-target="chatbot-section"
+          data-i18n="nav_najm"
+        >
+          نجم AI
+        </button>
+
+        {% if user %}
+        <a href="/admin" class="nav-btn btn-admin" data-i18n="nav_admin"
+          >الإدارة</a
+        >
+        <a
+          href="/admin/logout"
+          class="nav-btn btn-logout"
+          data-i18n="nav_logout"
+          >تسجيل الخروج</a
+        >
+        {% else %}
+        <a href="/admin/login" class="nav-btn btn-login" data-i18n="nav_login"
+          >دخول الإدارة</a
+        >
+        {% endif %}
       </nav>
     </header>
 
-    <main>
-      <section class="hero">
-        <h1>Bienvenue au Lycée Dakhla</h1>
-        <p>Plateforme officielle & Assistant virtuel Najm - Boujniba</p>
+    <main class="main-content">
+      <section id="overview-section" class="overview">
+        <h1 data-i18n="hero_title">مرحباً بكم في ثانوية الداخلة التأهيلية</h1>
+        <p class="hero-subtitle" data-i18n="hero_subtitle">
+          منصة التلميذ والتواصل الرقمي ببوجنيبة
+        </p>
+        <div class="overview-card">
+          <div class="card-content" data-i18n="about_text">
+            تعتبر ثانويتنا التأهيلية ببوجنيبة مؤسسة تعليمية تهدف إلى إعداد
+            التلاميذ لنيل شهادة البكالوريا ومتابعة مسارهم الدراسي الجامعي أو
+            المهني، وتوفير فضاء متميز للتعلم والابتكار.
+          </div>
+        </div>
       </section>
 
-      <section id="announcements" class="container">
-        <h2>Annonces Officielle</h2>
-        <div id="announcements-list" class="grid"></div>
+      <section id="announcements-section" class="overview">
+        <h2 class="section-title" data-i18n="sec_announcements">
+          الإعلانات الرسمية
+        </h2>
+        <div id="announcementsContainer" class="feed-grid">
+          <p class="loading-text" data-i18n="loading_announcements">
+            جاري تحميل الإعلانات...
+          </p>
+        </div>
       </section>
 
-      <section id="projects" class="container">
-        <h2>Projets des Élèves</h2>
-        <div id="projects-list" class="grid"></div>
+      <section id="gallery-section" class="overview">
+        <h2 class="section-title" data-i18n="sec_projects">معرض المشاريع</h2>
+        <div id="projectsContainer" class="feed-grid">
+          <p class="loading-text" data-i18n="loading_projects">
+            جاري تحميل المشاريع...
+          </p>
+        </div>
       </section>
 
-      <section id="chat" class="container">
-        <h2>Posez vos questions à Najm</h2>
-        <div class="chat-box">
-          <div id="chat-messages" class="chat-messages"></div>
-          <form id="chat-form" class="chat-form">
-            <input
-              type="text"
-              id="user-input"
-              placeholder="Posez une question sur le lycée..."
-              required
-            />
-            <button type="submit">Envoyer</button>
-          </form>
+      <section id="chatbot-section" class="chatbot">
+        <h2 data-i18n="najm_title">المساعد الذكي - نجم</h2>
+        <div id="chatBox">
+          <div class="chat-head">
+            <span>نجم</span>
+            <button
+              id="collapseBtn"
+              class="collapse"
+              data-i18n-aria="chat_collapse"
+              aria-label="تصغير"
+            ></button>
+          </div>
+          <div id="messages" role="log" aria-live="polite">
+            <div class="message najm welcome" data-i18n="najm_welcome">
+              مرحباً! أنا نجم، المساعد الذكي للثانوية. كيف يمكنني مساعدتك اليوم؟
+            </div>
+          </div>
+          <div
+            id="typing"
+            class="typing"
+            role="status"
+            aria-label="نجم يفكر..."
+            hidden
+          >
+            <span></span><span></span><span></span>
+          </div>
+          <div class="composer">
+            <label for="inputBox" class="sr-only">Najm</label>
+            <textarea
+              id="inputBox"
+              rows="1"
+              placeholder="اسأل نجم عن أي شيء يتعلق بالدراسة..."
+              data-i18n="najm_placeholder"
+            ></textarea>
+            <button id="submBtn" class="submit" aria-label="Envoyer"></button>
+          </div>
         </div>
       </section>
     </main>
-
-    <footer>
-      <p>&copy; Lycée Dakhla - Boujniba, Maroc. Tous droits réservés.</p>
-    </footer>
 
     <script src="/static/translations.js"></script>
     <script src="/static/script.js"></script>

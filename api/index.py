@@ -12,9 +12,8 @@ from flask import (
     url_for,
     render_template,
 )
-from werkzeug.middleware.proxy_fix import ProxyFix
 
-api_dir = os.path.dirname(os.path.abspath(__file__))
+api_dir = os.path.dirname(__file__)
 if api_dir not in sys.path:
     sys.path.append(api_dir)
 
@@ -22,25 +21,17 @@ import db
 
 root_dir = os.path.abspath(os.path.join(api_dir, ".."))
 template_dir = os.path.join(api_dir, "templates")
-static_dir = os.path.join(root_dir, "static")
 
-# FIX: point Flask's built-in static handler at the root /static folder
 app = Flask(
-    __name__,
-    template_folder=template_dir,
-    static_folder=static_dir,
-    static_url_path="/static",
+    __name__, template_folder=template_dir, static_folder=root_dir, static_url_path=""
 )
 
-# FIX: Vercel sits behind a proxy, so trust its headers (correct https URLs for OAuth)
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
-
-# Set FLASK_SECRET_KEY in Vercel env vars, otherwise sessions break between instances
-app.secret_key = os.environ.get("FLASK_SECRET_KEY") or os.urandom(24).hex()
+app.secret_key = os.environ.get(
+    "FLASK_SECRET_KEY", "lycee-dakhla-permanent-secret-998877"
+)
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = bool(os.environ.get("VERCEL"))
 
 ALLOWED_ADMINS = ["proviseur.lyceedakhla@gmail.com", "redaisvibin211@gmail.com"]
 
@@ -111,14 +102,7 @@ def admin_panel():
 @app.route("/admin/login")
 def admin_login():
     if not google:
-        # FIX: no more free admin access when OAuth is missing.
-        # Local dev only: set ALLOW_DEV_LOGIN=1 in your .env to bypass.
-        if os.environ.get("ALLOW_DEV_LOGIN") == "1" and not os.environ.get("VERCEL"):
-            session.permanent = True
-            session["user"] = ALLOWED_ADMINS[0]
-            return redirect("/admin")
-        return "Google OAuth non configuré.", 500
-
+        return "Google OAuth non configuré sur le serveur.", 500
     redirect_uri = url_for("auth_callback", _external=True)
     return google.authorize_redirect(redirect_uri)
 
@@ -224,7 +208,7 @@ Annonces récentes:
     def generate():
         try:
             response_stream = client.models.generate_content_stream(
-                model="gemini-2.5-flash",
+                model="gemini-3.6-flash",
                 contents=text,
                 config=types.GenerateContentConfig(system_instruction=system_prompt),
             )
