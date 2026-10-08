@@ -1,204 +1,133 @@
-function t(key) {
-  const lang = localStorage.getItem("selected_lang") || "ar";
-  return (translations[lang] && translations[lang][key]) || key;
-}
-
-function setLanguage(lang) {
-  if (typeof translations === "undefined" || !translations[lang]) return;
-
-  localStorage.setItem("selected_lang", lang);
-
-  document.documentElement.lang = lang;
-  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const key = el.getAttribute("data-i18n");
-    if (translations[lang][key]) {
-      if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
-        el.placeholder = translations[lang][key];
-      } else {
-        el.textContent = translations[lang][key];
-      }
-    }
-  });
-
-  document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
-    const key = el.getAttribute("data-i18n-aria");
-    if (translations[lang][key]) {
-      el.setAttribute("aria-label", translations[lang][key]);
-    }
-  });
-
-  document
-    .querySelectorAll(".lang-btn")
-    .forEach((btn) => btn.classList.remove("active"));
-  const activeBtn = document.getElementById(`btn-${lang}`);
-  if (activeBtn) activeBtn.classList.add("active");
-}
-
 document.addEventListener("DOMContentLoaded", () => {
-  const savedLang = localStorage.getItem("selected_lang") || "ar";
-  setLanguage(savedLang);
+  const chatForm = document.getElementById("chat-form");
+  const userInput = document.getElementById("user-input");
+  const chatMessages = document.getElementById("chat-messages");
+  const announcementsContainer = document.getElementById("announcements-list");
+  const projectsContainer = document.getElementById("projects-list");
 
-  loadAnnouncements();
-  loadProjects();
-
-  const navBtns = document.querySelectorAll(".navBtn");
-  navBtns.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const targetId = btn.getAttribute("data-target");
-      if (!targetId) return;
-
-      const targetSection = document.getElementById(targetId);
-      if (targetSection) {
-        e.preventDefault();
-        targetSection.scrollIntoView({ behavior: "smooth" });
-
-        navBtns.forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-      }
+  // Prevent SPA/interceptor scripts from blocking admin route navigation
+  document.querySelectorAll('a[href^="/admin"]').forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.stopPropagation();
     });
   });
 
-  const submitBtn = document.getElementById("submBtn");
-  const inputBox = document.getElementById("inputBox");
-  if (submitBtn && inputBox) {
-    submitBtn.addEventListener("click", () => sendChatMessage());
-    inputBox.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendChatMessage();
-      }
-    });
-  }
-});
-
-function loadAnnouncements() {
-  const container = document.getElementById("announcementsContainer");
-  if (!container) return;
-
-  fetch("/api/announcements")
-    .then((res) => res.json())
-    .then((data) => {
-      if (!data || data.length === 0) {
-        container.innerHTML = `<p class="loading-text">${t("no_announcements")}</p>`;
-        return;
-      }
-      container.innerHTML = data
-        .map(
-          (item) => `
-        <div class="overview-card">
-          ${item.image_url ? `<div class="card-media"><img src="${item.image_url}" alt="${item.title}" /></div>` : ""}
-          <div class="card-content">
+  // Fetch announcements
+  if (announcementsContainer) {
+    fetch("/api/announcements")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data || data.length === 0) {
+          announcementsContainer.innerHTML =
+            "<p>Aucune annonce pour le moment.</p>";
+          return;
+        }
+        announcementsContainer.innerHTML = data
+          .map(
+            (item) => `
+          <div class="card">
+            ${
+              item.image_url
+                ? `<img src="${item.image_url}" alt="${item.title}" class="card-img" />`
+                : ""
+            }
             <h3>${item.title}</h3>
             <p>${item.content}</p>
-            <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">${item.signature} &bull; ${new Date(item.created_at).toLocaleDateString()}</small>
+            <small>Par ${item.signature || "Le Proviseur"} - ${
+              item.created_at
+            }</small>
           </div>
-        </div>
-      `,
-        )
-        .join("");
-    })
-    .catch(() => {
-      container.innerHTML = `<p class="loading-text">${t("err_network")}</p>`;
-    });
-}
-
-function loadProjects() {
-  const container = document.getElementById("projectsContainer");
-  if (!container) return;
-
-  fetch("/api/projects")
-    .then((res) => res.json())
-    .then((data) => {
-      if (!data || data.length === 0) {
-        container.innerHTML = `<p class="loading-text">${t("no_projects")}</p>`;
-        return;
-      }
-      container.innerHTML = data
-        .map(
-          (item) => `
-        <div class="overview-card">
-          ${item.image_url ? `<div class="card-media"><img src="${item.image_url}" alt="${item.title}" /></div>` : ""}
-          <div class="card-content">
-            <h3>${item.title}</h3>
-            <p><strong>${item.student_name}</strong></p>
-            <p>${item.description}</p>
-          </div>
-        </div>
-      `,
-        )
-        .join("");
-    })
-    .catch(() => {
-      container.innerHTML = `<p class="loading-text">${t("err_network")}</p>`;
-    });
-}
-
-function appendChatMessage(sender, text) {
-  const messagesContainer = document.getElementById("messages");
-  if (!messagesContainer) return;
-
-  const msgDiv = document.createElement("div");
-  msgDiv.className = `message ${sender}`;
-  msgDiv.textContent = text;
-  messagesContainer.appendChild(msgDiv);
-  messagesContainer.scrollTop = messagesContainer.scrollHeight;
-  return msgDiv;
-}
-
-function sendChatMessage() {
-  const inputBox = document.getElementById("inputBox");
-  if (!inputBox) return;
-
-  const message = inputBox.value.trim();
-  if (!message) {
-    alert(t("err_empty_input"));
-    return;
+        `,
+          )
+          .join("");
+      })
+      .catch((err) => {
+        console.error("Error loading announcements:", err);
+      });
   }
 
-  appendChatMessage("user", message);
-  inputBox.value = "";
-
-  const typingEl = document.getElementById("typing");
-  if (typingEl) {
-    typingEl.setAttribute("aria-label", t("najm_thinking"));
-    typingEl.removeAttribute("hidden");
-  }
-
-  fetch("/api/index", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text: message }),
-  })
-    .then(async (res) => {
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || t("err_generic"));
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let botMsgDiv = null;
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        if (!botMsgDiv) {
-          botMsgDiv = appendChatMessage("najm", chunk);
-        } else {
-          botMsgDiv.textContent += chunk;
-          const container = document.getElementById("messages");
-          if (container) container.scrollTop = container.scrollHeight;
+  // Fetch projects
+  if (projectsContainer) {
+    fetch("/api/projects")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data || data.length === 0) {
+          projectsContainer.innerHTML =
+            "<p>Aucun projet d'élève disponible.</p>";
+          return;
         }
+        projectsContainer.innerHTML = data
+          .map(
+            (item) => `
+          <div class="card">
+            ${
+              item.image_url
+                ? `<img src="${item.image_url}" alt="${item.title}" class="card-img" />`
+                : ""
+            }
+            <h3>${item.title}</h3>
+            <p>${item.description}</p>
+            <small>Réalisé par : ${item.student_name}</small>
+          </div>
+        `,
+          )
+          .join("");
+      })
+      .catch((err) => {
+        console.error("Error loading projects:", err);
+      });
+  }
+
+  // Chat interface handling
+  if (chatForm && userInput && chatMessages) {
+    chatForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      appendMessage("user", message);
+      userInput.value = "";
+
+      const botMessageElement = appendMessage("assistant", "...");
+
+      try {
+        const response = await fetch("/api/index", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: message }),
+        });
+
+        if (!response.ok) {
+          botMessageElement.textContent =
+            "Erreur lors de la communication avec Najm.";
+          return;
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        botMessageElement.textContent = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          botMessageElement.textContent += decoder.decode(value, {
+            stream: true,
+          });
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+      } catch (err) {
+        console.error("Chat error:", err);
+        botMessageElement.textContent = "Impossible de contacter le serveur.";
       }
-    })
-    .catch((err) => {
-      appendChatMessage("najm", err.message || t("err_network"));
-    })
-    .finally(() => {
-      if (typingEl) typingEl.setAttribute("hidden", "true");
     });
-}
+  }
+
+  function appendMessage(role, text) {
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("message", role);
+    msgDiv.textContent = text;
+    chatMessages.appendChild(msgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return msgDiv;
+  }
+});

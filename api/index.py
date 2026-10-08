@@ -11,6 +11,7 @@ from flask import (
     redirect,
     url_for,
     render_template,
+    send_from_directory,
 )
 
 api_dir = os.path.dirname(__file__)
@@ -23,12 +24,7 @@ root_dir = os.path.abspath(os.path.join(api_dir, ".."))
 template_dir = os.path.join(api_dir, "templates")
 static_dir = os.path.join(root_dir, "static")
 
-app = Flask(
-    __name__,
-    template_folder=template_dir,
-    static_folder=static_dir,
-    static_url_path="/static",
-)
+app = Flask(__name__, template_folder=template_dir)
 
 app.secret_key = os.environ.get(
     "FLASK_SECRET_KEY", "lycee-dakhla-permanent-secret-998877"
@@ -71,6 +67,11 @@ def admin_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+@app.route("/static/<path:filename>")
+def serve_static(filename):
+    return send_from_directory(static_dir, filename)
 
 
 @app.route("/")
