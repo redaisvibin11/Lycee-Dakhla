@@ -79,7 +79,7 @@ h3 {
 
 .nav-item {
   background: none;
-  border: none;
+  border: 2px solid transparent;
   color: var(--text-muted);
   text-decoration: none;
   font-family: inherit;
@@ -92,15 +92,16 @@ h3 {
 }
 
 .nav-item:hover {
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: rgba(42, 29, 22, 0.04);
   color: var(--text);
 }
 
 .nav-item.active {
-  background-color: var(--primary);
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(168, 70, 42, 0.3);
+  background-color: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(168, 70, 42, 0.15);
 }
 
 .nav-btn {

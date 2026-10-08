@@ -5,6 +5,39 @@ document.querySelectorAll(".navBtn").forEach((btn) => {
   });
 });
 
+const sectionIds = [
+  "overview-section",
+  "announcements-section",
+  "gallery-section",
+  "chatbot-section",
+];
+
+const observerOptions = {
+  root: null,
+  rootMargin: "-20% 0px -60% 0px",
+  threshold: 0,
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      const activeId = entry.target.id;
+      document.querySelectorAll(".navBtn").forEach((btn) => {
+        if (btn.dataset.target === activeId) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+    }
+  });
+}, observerOptions);
+
+sectionIds.forEach((id) => {
+  const sec = document.getElementById(id);
+  if (sec) observer.observe(sec);
+});
+
 async function loadAnnouncements() {
   const container = document.getElementById("announcementsContainer");
   if (!container) return;
