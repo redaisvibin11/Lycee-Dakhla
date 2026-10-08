@@ -211,7 +211,7 @@ Annonces récentes:
 
     def generate():
         try:
-            response_stream = client.models.generate - content_stream(
+            response_stream = client.models.generate_content_stream(
                 model="gemini-3.6-flash",
                 contents=text,
                 config=types.GenerateContentConfig(system_instruction=system_prompt),

@@ -8,8 +8,10 @@
       content="منصة التلميذ والمساعد الذكي لثانوية الداخلة التأهيلية ببوجنيبة."
     />
     <title>ثانوية الداخلة - Lycée Dakhla</title>
-    <link rel="stylesheet" href="/static/style.css" />
-    <script src="/static/translations.js"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
   </head>
   <body>
     <header class="floating-nav-wrapper">
@@ -152,6 +154,7 @@
       </section>
     </main>
 
-    <script src="/static/script.js"></script>
+    <script src="{{ url_for('static', filename='translations.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>
