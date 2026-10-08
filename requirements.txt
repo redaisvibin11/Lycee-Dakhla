@@ -1,4 +1,5 @@
 Flask
 Authlib
-google-genai
 requests
+google-genai
+libsql-client
