@@ -7,136 +7,135 @@
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <header>
-      <nav class="navbar">
-        <div class="logo">Administration - Lycée Dakhla</div>
-        <ul class="nav-links">
-          <li><a href="/">Retour au site</a></li>
-          <li>
-            <a href="/admin/logout" class="btn-logout"
-              >Déconnexion ({{ user }})</a
-            >
-          </li>
-        </ul>
-      </nav>
-    </header>
-
-    <main class="container">
-      <h1>Espace d'Administration</h1>
-
-      <section class="admin-section">
-        <h2>Nouvelle Annonce</h2>
-        <form
-          action="/api/admin/announcements/new"
-          method="POST"
-          class="admin-form"
+    <div class="floating-nav-wrapper">
+      <nav class="floating-nav">
+        <a href="/" class="nav-item">← Retour au site</a>
+        <a href="/admin/logout" class="nav-btn btn-logout"
+          >Déconnexion ({{ user }})</a
         >
-          <input
-            type="text"
-            name="title"
-            placeholder="Titre de l'annonce"
-            required
-          />
-          <textarea
-            name="content"
-            placeholder="Contenu de l'annonce"
-            required
-          ></textarea>
-          <input
-            type="text"
-            name="signature"
-            placeholder="Signature (ex: Le Proviseur)"
-            value="Le Proviseur"
-          />
-          <input
-            type="url"
-            name="image_url"
-            placeholder="URL de l'image (optionnel)"
-          />
-          <button type="submit">Publier l'annonce</button>
-        </form>
+      </nav>
+    </div>
 
-        <h3>Annonces Publiées</h3>
-        <ul class="admin-list">
-          {% for a in announcements %}
-          <li>
-            <strong>{{ a.title }}</strong> ({{ a.created_at }})
-            <form
-              action="/api/admin/announcements/delete/{{ a.id }}"
-              method="POST"
-              style="display: inline"
-            >
-              <button type="submit" class="btn-delete">Supprimer</button>
-            </form>
-          </li>
-          {% else %}
-          <li>Aucune annonce.</li>
-          {% endfor %}
-        </ul>
-      </section>
+    <main class="main-content">
+      <div class="admin-container">
+        <h1>Espace d'Administration</h1>
 
-      <section class="admin-section">
-        <h2>Nouveau Projet d'Élève</h2>
-        <form action="/api/admin/projects/new" method="POST" class="admin-form">
-          <input
-            type="text"
-            name="title"
-            placeholder="Titre du projet"
-            required
-          />
-          <input
-            type="text"
-            name="student_name"
-            placeholder="Nom de l'élève"
-            required
-          />
-          <textarea
-            name="description"
-            placeholder="Description du projet"
-            required
-          ></textarea>
-          <input
-            type="url"
-            name="image_url"
-            placeholder="URL de l'image (optionnel)"
-          />
-          <button type="submit">Publier le projet</button>
-        </form>
+        <section class="admin-section">
+          <h2>Nouvelle Annonce</h2>
+          <form
+            action="/api/admin/announcements/new"
+            method="POST"
+            class="admin-form"
+          >
+            <input
+              type="text"
+              name="title"
+              placeholder="Titre de l'annonce"
+              required
+            />
+            <textarea
+              name="content"
+              placeholder="Contenu de l'annonce"
+              required
+            ></textarea>
+            <input
+              type="text"
+              name="signature"
+              placeholder="Signature"
+              value="Le Proviseur"
+            />
+            <input
+              type="url"
+              name="image_url"
+              placeholder="URL de l'image (optionnel)"
+            />
+            <button type="submit">Publier l'annonce</button>
+          </form>
 
-        <h3>Projets Publiés</h3>
-        <ul class="admin-list">
-          {% for p in projects %}
-          <li>
-            <strong>{{ p.title }}</strong> par {{ p.student_name }}
-            <form
-              action="/api/admin/projects/delete/{{ p.id }}"
-              method="POST"
-              style="display: inline"
-            >
-              <button type="submit" class="btn-delete">Supprimer</button>
-            </form>
-          </li>
-          {% else %}
-          <li>Aucun projet.</li>
-          {% endfor %}
-        </ul>
-      </section>
+          <h3>Annonces Publiées</h3>
+          <ul class="admin-list">
+            {% for a in announcements %}
+            <li>
+              <span><strong>{{ a.title }}</strong> ({{ a.created_at }})</span>
+              <form
+                action="/api/admin/announcements/delete/{{ a.id }}"
+                method="POST"
+              >
+                <button type="submit" class="btn-delete">Supprimer</button>
+              </form>
+            </li>
+            {% else %}
+            <li>Aucune annonce.</li>
+            {% endfor %}
+          </ul>
+        </section>
 
-      <section class="admin-section">
-        <h2>Journaux d'Audit (Connexions)</h2>
-        <ul class="admin-list">
-          {% for log in logs %}
-          <li>
-            [{{ log.timestamp }}] {{ log.user_email }} - {{ log.status }} (IP:
-            {{ log.ip_address }})
-          </li>
-          {% else %}
-          <li>Aucun journal d'accès.</li>
-          {% endfor %}
-        </ul>
-      </section>
+        <section class="admin-section">
+          <h2>Nouveau Projet d'Élève</h2>
+          <form
+            action="/api/admin/projects/new"
+            method="POST"
+            class="admin-form"
+          >
+            <input
+              type="text"
+              name="title"
+              placeholder="Titre du projet"
+              required
+            />
+            <input
+              type="text"
+              name="student_name"
+              placeholder="Nom de l'élève"
+              required
+            />
+            <textarea
+              name="description"
+              placeholder="Description du projet"
+              required
+            ></textarea>
+            <input
+              type="url"
+              name="image_url"
+              placeholder="URL de l'image (optionnel)"
+            />
+            <button type="submit">Publier le projet</button>
+          </form>
+
+          <h3>Projets Publiés</h3>
+          <ul class="admin-list">
+            {% for p in projects %}
+            <li>
+              <span
+                ><strong>{{ p.title }}</strong> par {{ p.student_name }}</span
+              >
+              <form
+                action="/api/admin/projects/delete/{{ p.id }}"
+                method="POST"
+              >
+                <button type="submit" class="btn-delete">Supprimer</button>
+              </form>
+            </li>
+            {% else %}
+            <li>Aucun projet.</li>
+            {% endfor %}
+          </ul>
+        </section>
+
+        <section class="admin-section">
+          <h2>Journaux d'Audit (Connexions)</h2>
+          <ul class="admin-list">
+            {% for log in logs %}
+            <li>
+              [{{ log.timestamp }}] {{ log.email }} - {{ log.status }} (IP: {{
+              log.ip_address }})
+            </li>
+            {% else %}
+            <li>Aucun journal d'accès.</li>
+            {% endfor %}
+          </ul>
+        </section>
+      </div>
     </main>
-
-    <script src="/static/script.js"></script>
   </body>
 </html>
