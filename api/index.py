@@ -1,5 +1,6 @@
 import os
 import sys
+from datetime import timedelta
 from functools import wraps
 from flask import (
     Flask,
@@ -24,9 +25,15 @@ template_dir = os.path.join(api_dir, "templates")
 app = Flask(
     __name__, template_folder=template_dir, static_folder=root_dir, static_url_path=""
 )
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default-dev-secret-12345")
 
-ALLOWED_ADMINS = ["proviseur.lyceedakhla@gmail.com", "redaisvibin211@gmail.com"]
+app.secret_key = os.environ.get(
+    "FLASK_SECRET_KEY", "lycee-dakhla-permanent-secret-998877"
+)
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+
+ALLOWED_ADMINS = ["proviseur.lyceedakhla@gmail.com", "your_email@gmail.com"]
 
 try:
     db.init_db()
@@ -111,6 +118,7 @@ def auth_callback():
 
     if email in ALLOWED_ADMINS:
         db.log_audit(email, "SUCCESS", client_ip)
+        session.permanent = True
         session["user"] = email
         return redirect("/admin")
     else:

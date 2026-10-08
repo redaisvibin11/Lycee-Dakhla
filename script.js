@@ -1,3 +1,37 @@
+async function loadAnnouncements() {
+  const container = document.getElementById("announcements-container");
+  if (!container) return;
+
+  try {
+    const response = await fetch("/api/announcements");
+    const announcements = await response.json();
+
+    if (announcements.length === 0) {
+      container.innerHTML =
+        '<p class="text-muted">Aucune annonce pour le moment.</p>';
+      return;
+    }
+
+    container.innerHTML = announcements
+      .map(
+        (item) => `
+            <div class="announcement-card">
+                <h3>${item.title}</h3>
+                <p>${item.content}</p>
+                ${item.image_url ? `<img src="${item.image_url}" alt="${item.title}">` : ""}
+                <div class="meta">
+                    <span>${item.signature}</span> • <small>${item.created_at}</small>
+                </div>
+            </div>
+        `,
+      )
+      .join("");
+  } catch (err) {
+    console.error("Failed to load announcements:", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadAnnouncements);
 document.querySelectorAll(".navBtn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const target = document.getElementById(btn.dataset.target);
