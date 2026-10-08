@@ -1,160 +1,142 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="منصة التلميذ والمساعد الذكي لثانوية الداخلة التأهيلية ببوجنيبة."
-    />
-    <title>ثانوية الداخلة - Lycée Dakhla</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <title>Administration - Lycée Dakhla</title>
+    <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <header class="floating-nav-wrapper">
-      <nav class="floating-nav">
-        <!-- Language Switcher integrated directly into the pill -->
-        <div class="lang-switcher">
-          <button
-            onclick="setLanguage('ar')"
-            class="lang-btn active"
-            id="btn-ar"
-          >
-            AR
-          </button>
-          <button onclick="setLanguage('fr')" class="lang-btn" id="btn-fr">
-            FR
-          </button>
-          <button onclick="setLanguage('en')" class="lang-btn" id="btn-en">
-            EN
-          </button>
-        </div>
-
-        <button
-          class="nav-item active navBtn"
-          data-target="overview-section"
-          data-i18n="nav_home"
-        >
-          الرئيسية
-        </button>
-        <button
-          class="nav-item navBtn"
-          data-target="announcements-section"
-          data-i18n="nav_announcements"
-        >
-          الإعلانات
-        </button>
-        <button
-          class="nav-item navBtn"
-          data-target="gallery-section"
-          data-i18n="nav_projects"
-        >
-          مشاريع التلاميذ
-        </button>
-        <button
-          class="nav-item navBtn"
-          data-target="chatbot-section"
-          data-i18n="nav_najm"
-        >
-          نجم AI
-        </button>
-
-        {% if user %}
-        <a href="/admin" class="nav-btn btn-admin" data-i18n="nav_admin"
-          >الإدارة</a
-        >
-        <a
-          href="/admin/logout"
-          class="nav-btn btn-logout"
-          data-i18n="nav_logout"
-          >تسجيل الخروج</a
-        >
-        {% else %}
-        <a href="/admin/login" class="nav-btn btn-login" data-i18n="nav_login"
-          >دخول الإدارة</a
-        >
-        {% endif %}
+    <header>
+      <nav class="navbar">
+        <div class="logo">Administration - Lycée Dakhla</div>
+        <ul class="nav-links">
+          <li><a href="/">Retour au site</a></li>
+          <li>
+            <a href="/admin/logout" class="btn-logout"
+              >Déconnexion ({{ user }})</a
+            >
+          </li>
+        </ul>
       </nav>
     </header>
 
-    <main class="main-content">
-      <section id="overview-section" class="overview">
-        <h1 data-i18n="hero_title">مرحباً بكم في ثانوية الداخلة التأهيلية</h1>
-        <p class="hero-subtitle" data-i18n="hero_subtitle">
-          منصة التلميذ والتواصل الرقمي ببوجنيبة
-        </p>
-        <div class="overview-card">
-          <div class="card-content" data-i18n="about_text">
-            تعتبر ثانويتنا التأهيلية ببوجنيبة مؤسسة تعليمية تهدف إلى إعداد
-            التلاميذ لنيل شهادة البكالوريا ومتابعة مسارهم الدراسي الجامعي أو
-            المهني، وتوفير فضاء متميز للتعلم والابتكار.
-          </div>
-        </div>
+    <main class="container">
+      <h1>Espace d'Administration</h1>
+
+      <section class="admin-section">
+        <h2>Nouvelle Annonce</h2>
+        <form
+          action="/api/admin/announcements/new"
+          method="POST"
+          class="admin-form"
+        >
+          <input
+            type="text"
+            name="title"
+            placeholder="Titre de l'annonce"
+            required
+          />
+          <textarea
+            name="content"
+            placeholder="Contenu de l'annonce"
+            required
+          ></textarea>
+          <input
+            type="text"
+            name="signature"
+            placeholder="Signature (ex: Le Proviseur)"
+            value="Le Proviseur"
+          />
+          <input
+            type="url"
+            name="image_url"
+            placeholder="URL de l'image (optionnel)"
+          />
+          <button type="submit">Publier l'annonce</button>
+        </form>
+
+        <h3>Annonces Publiées</h3>
+        <ul class="admin-list">
+          {% for a in announcements %}
+          <li>
+            <strong>{{ a.title }}</strong> ({{ a.created_at }})
+            <form
+              action="/api/admin/announcements/delete/{{ a.id }}"
+              method="POST"
+              style="display: inline"
+            >
+              <button type="submit" class="btn-delete">Supprimer</button>
+            </form>
+          </li>
+          {% else %}
+          <li>Aucune annonce.</li>
+          {% endfor %}
+        </ul>
       </section>
 
-      <section id="announcements-section" class="overview">
-        <h2 class="section-title" data-i18n="sec_announcements">
-          الإعلانات الرسمية
-        </h2>
-        <div id="announcementsContainer" class="feed-grid">
-          <p class="loading-text" data-i18n="loading_announcements">
-            جاري تحميل الإعلانات...
-          </p>
-        </div>
+      <section class="admin-section">
+        <h2>Nouveau Projet d'Élève</h2>
+        <form action="/api/admin/projects/new" method="POST" class="admin-form">
+          <input
+            type="text"
+            name="title"
+            placeholder="Titre du projet"
+            required
+          />
+          <input
+            type="text"
+            name="student_name"
+            placeholder="Nom de l'élève"
+            required
+          />
+          <textarea
+            name="description"
+            placeholder="Description du projet"
+            required
+          ></textarea>
+          <input
+            type="url"
+            name="image_url"
+            placeholder="URL de l'image (optionnel)"
+          />
+          <button type="submit">Publier le projet</button>
+        </form>
+
+        <h3>Projets Publiés</h3>
+        <ul class="admin-list">
+          {% for p in projects %}
+          <li>
+            <strong>{{ p.title }}</strong> par {{ p.student_name }}
+            <form
+              action="/api/admin/projects/delete/{{ p.id }}"
+              method="POST"
+              style="display: inline"
+            >
+              <button type="submit" class="btn-delete">Supprimer</button>
+            </form>
+          </li>
+          {% else %}
+          <li>Aucun projet.</li>
+          {% endfor %}
+        </ul>
       </section>
 
-      <section id="gallery-section" class="overview">
-        <h2 class="section-title" data-i18n="sec_projects">معرض المشاريع</h2>
-        <div id="projectsContainer" class="feed-grid">
-          <p class="loading-text" data-i18n="loading_projects">
-            جاري تحميل المشاريع...
-          </p>
-        </div>
-      </section>
-
-      <section id="chatbot-section" class="chatbot">
-        <h2 data-i18n="najm_title">المساعد الذكي - نجم</h2>
-        <div id="chatBox">
-          <div class="chat-head">
-            <span>نجم</span>
-            <button
-              id="collapseBtn"
-              class="collapse"
-              aria-label="Réduire"
-            ></button>
-          </div>
-          <div id="messages" role="log" aria-live="polite">
-            <div class="message najm welcome" data-i18n="najm_welcome">
-              مرحباً! أنا نجم، المساعد الذكي للثانوية. كيف يمكنني مساعدتك اليوم؟
-            </div>
-          </div>
-          <div
-            id="typing"
-            class="typing"
-            role="status"
-            aria-label="Najm is thinking"
-            hidden
-          >
-            <span></span><span></span><span></span>
-          </div>
-          <div class="composer">
-            <label for="inputBox" class="sr-only">Najm Input</label>
-            <textarea
-              id="inputBox"
-              rows="1"
-              placeholder="اسأل نجم عن أي شيء..."
-              data-i18n="najm_placeholder"
-            ></textarea>
-            <button id="submBtn" class="submit" aria-label="Send"></button>
-          </div>
-        </div>
+      <section class="admin-section">
+        <h2>Journaux d'Audit (Connexions)</h2>
+        <ul class="admin-list">
+          {% for log in logs %}
+          <li>
+            [{{ log.timestamp }}] {{ log.user_email }} - {{ log.status }} (IP:
+            {{ log.ip_address }})
+          </li>
+          {% else %}
+          <li>Aucun journal d'accès.</li>
+          {% endfor %}
+        </ul>
       </section>
     </main>
 
-    <script src="{{ url_for('static', filename='translations.js') }}"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="/static/script.js"></script>
   </body>
 </html>
