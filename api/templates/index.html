@@ -8,61 +8,83 @@
       content="Assistant IA et informations sur le Lycée Dakhla de Boujniba."
     />
     <title>Lycée Dakhla</title>
-    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="style.css?v=2.0" />
+    <script src="/static/translations.js"></script>
   </head>
   <body>
     <header class="floating-nav-wrapper">
       <nav class="floating-nav">
-        <button class="nav-item active navBtn" data-target="overview-section">
+        <div class="lang-switcher">
+          <button onclick="setLanguage('ar')" class="lang-btn" id="btn-ar">
+            AR
+          </button>
+          <button
+            onclick="setLanguage('fr')"
+            class="lang-btn active"
+            id="btn-fr"
+          >
+            FR
+          </button>
+          <button onclick="setLanguage('en')" class="lang-btn" id="btn-en">
+            EN
+          </button>
+        </div>
+
+        <button
+          class="nav-item active navBtn"
+          data-target="overview-section"
+          data-i18n="nav_home"
+        >
           Aperçu
         </button>
-        <button class="nav-item navBtn" data-target="announcements-section">
+        <button
+          class="nav-item navBtn"
+          data-target="announcements-section"
+          data-i18n="nav_announcements"
+        >
           Annonces
         </button>
-        <button class="nav-item navBtn" data-target="gallery-section">
+        <button
+          class="nav-item navBtn"
+          data-target="gallery-section"
+          data-i18n="nav_projects"
+        >
           Projets Élèves
         </button>
-        <button class="nav-item navBtn" data-target="chatbot-section">
+        <button
+          class="nav-item navBtn"
+          data-target="chatbot-section"
+          data-i18n="nav_najm"
+        >
           Najm
         </button>
 
         {% if user %}
-        <a href="/admin" class="nav-btn btn-admin">Administration</a>
-        <a href="/admin/logout" class="nav-btn btn-logout">Déconnexion</a>
+        <a href="/admin" class="nav-btn btn-admin" data-i18n="nav_admin"
+          >Administration</a
+        >
+        <a
+          href="/admin/logout"
+          class="nav-btn btn-logout"
+          data-i18n="nav_logout"
+          >Déconnexion</a
+        >
         {% else %}
-        <a href="/admin/login" class="nav-btn btn-login">Connexion Admin</a>
+        <a href="/admin/login" class="nav-btn btn-login" data-i18n="nav_login"
+          >Connexion Admin</a
+        >
         {% endif %}
       </nav>
     </header>
 
-    <script src="/static/translations.js"></script>
-
-    <div class="lang-switcher">
-      <button onclick="setLanguage('ar')" class="lang-btn active" id="btn-ar">
-        AR
-      </button>
-      <button onclick="setLanguage('fr')" class="lang-btn" id="btn-fr">
-        FR
-      </button>
-      <button onclick="setLanguage('en')" class="lang-btn" id="btn-en">
-        EN
-      </button>
-    </div>
-
-    <nav class="nav-pill">
-      <a href="#home" data-i18n="nav_home">الرئيسية</a>
-      <a href="#announcements" data-i18n="nav_announcements">الإعلانات</a>
-      <a href="#projects" data-i18n="nav_projects">مشاريع التلاميذ</a>
-      <a href="#najm" data-i18n="nav_najm">نجم AI</a>
-      <a href="/admin" data-i18n="nav_admin">الإدارة</a>
-    </nav>
-
-    <h1 data-i18n="hero_title">مرحباً بكم في ثانوية الداخلة التأهيلية</h1>
-    <p data-i18n="hero_subtitle">منصة التلميذ والتواصل الرقمي ببوجنيبة</p>
     <main class="main-content">
       <section id="overview-section" class="overview">
+        <h1 data-i18n="hero_title">Bienvenue au Lycée Dakhla</h1>
+        <p class="hero-subtitle" data-i18n="hero_subtitle">
+          Plateforme numérique et espace élève à Boujniba
+        </p>
         <div class="overview-card">
-          <div class="card-content">
+          <div class="card-content" data-i18n="about_text">
             Notre lycée qualifiant de Boujniba est un établissement secondaire
             qui prépare les élèves au baccalauréat et à la suite de leur
             parcours, que ce soit l'université, une filière technique ou la vie
@@ -73,21 +95,29 @@
       </section>
 
       <section id="announcements-section" class="overview">
-        <h2 class="section-title">Annonces Officielles</h2>
+        <h2 class="section-title" data-i18n="sec_announcements">
+          Annonces Officielles
+        </h2>
         <div id="announcementsContainer" class="feed-grid">
-          <p class="loading-text">Chargement des annonces...</p>
+          <p class="loading-text" data-i18n="loading_announcements">
+            Chargement des annonces...
+          </p>
         </div>
       </section>
 
       <section id="gallery-section" class="overview">
-        <h2 class="section-title">Galerie des Projets</h2>
+        <h2 class="section-title" data-i18n="sec_projects">
+          Galerie des Projets
+        </h2>
         <div id="projectsContainer" class="feed-grid">
-          <p class="loading-text">Chargement des projets...</p>
+          <p class="loading-text" data-i18n="loading_projects">
+            Chargement des projets...
+          </p>
         </div>
       </section>
 
       <section id="chatbot-section" class="chatbot">
-        <h2>Voici Najm, notre assistant IA.</h2>
+        <h2 data-i18n="najm_title">Voici Najm, notre assistant IA.</h2>
         <div id="chatBox">
           <div class="chat-head">
             <span>Najm</span>
@@ -98,7 +128,7 @@
             ></button>
           </div>
           <div id="messages" role="log" aria-live="polite">
-            <div class="message najm welcome">
+            <div class="message najm welcome" data-i18n="najm_welcome">
               Salut, je suis Najm, l'assistant IA du lycée. Que veux-tu
               savoir&nbsp;?
             </div>
@@ -118,6 +148,7 @@
               id="inputBox"
               rows="1"
               placeholder="Demande à Najm"
+              data-i18n="najm_placeholder"
             ></textarea>
             <button id="submBtn" class="submit" aria-label="Envoyer"></button>
           </div>
