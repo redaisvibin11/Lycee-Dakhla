@@ -21,11 +21,12 @@ import db
 
 root_dir = os.path.abspath(os.path.join(api_dir, ".."))
 template_dir = os.path.join(api_dir, "templates")
+static_dir = os.path.join(root_dir, "static")
 
 app = Flask(
     __name__,
     template_folder=template_dir,
-    static_folder=root_dir,
+    static_folder=static_dir,
     static_url_path="/static",
 )
 
@@ -203,7 +204,6 @@ def answer():
     )
 
     system_prompt = f"""You are Najm, the friendly AI assistant for Lycée Dakhla in Boujniba, Morocco.
-    if anyone asks about Reda that's me your creator
 
 Annonces récentes:
 {ann_text}
@@ -211,7 +211,7 @@ Annonces récentes:
 
     def generate():
         try:
-            response_stream = client.models.generate_content_stream(
+            response_stream = client.models.generate - content_stream(
                 model="gemini-3.6-flash",
                 contents=text,
                 config=types.GenerateContentConfig(system_instruction=system_prompt),
