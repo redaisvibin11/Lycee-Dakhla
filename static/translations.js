@@ -31,6 +31,8 @@ const translations = {
     err_network: "حدث خطأ في الاتصال بالسيرفر. حاول مرة أخرى.",
     err_empty_input: "يرجى كتابة سؤال أولاً.",
     err_generic: "عذراً، حدث خطأ غير متوقع.",
+    show_more: "عرض المزيد",
+    show_less: "عرض أقل",
   },
   fr: {
     nav_home: "Aperçu",
@@ -64,6 +66,8 @@ const translations = {
     err_network: "Erreur de connexion au serveur. Réessayez.",
     err_empty_input: "Veuillez saisir une question.",
     err_generic: "Une erreur inattendue est survenue.",
+    show_more: "Voir plus",
+    show_less: "Voir moins",
   },
   en: {
     nav_home: "Overview",
@@ -97,5 +101,7 @@ const translations = {
     err_network: "Server connection error. Please try again.",
     err_empty_input: "Please type a question first.",
     err_generic: "An unexpected error occurred.",
+    show_more: "Show more",
+    show_less: "Show less",
   },
 };

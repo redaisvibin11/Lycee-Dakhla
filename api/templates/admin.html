@@ -10,9 +10,7 @@
     <header class="floating-nav-wrapper">
       <nav class="floating-nav">
         <a href="/" class="nav-item">← Retour au site</a>
-        <a href="/admin/logout" class="nav-btn btn-logout"
-          >Déconnexion ({{ user }})</a
-        >
+        <a href="/admin/logout" class="nav-btn btn-logout">Déconnexion ({{ user }})</a>
       </nav>
     </header>
 
@@ -25,46 +23,21 @@
 
           <details class="admin-add">
             <summary>Nouvelle annonce</summary>
-            <form
-              action="/api/admin/announcements/new"
-              method="POST"
-              class="admin-form"
-            >
-              <input
-                type="text"
-                name="title"
-                placeholder="Titre de l'annonce"
-                required
-              />
-              <textarea
-                name="content"
-                placeholder="Contenu de l'annonce"
-                required
-              ></textarea>
-              <input
-                type="text"
-                name="signature"
-                placeholder="Signature"
-                value="Le Proviseur"
-              />
-              <input
-                type="url"
-                name="image_url"
-                placeholder="URL de l'image (optionnel)"
-              />
+            <form action="/api/admin/announcements/new" method="POST" class="admin-form">
+              <input type="text" name="title" placeholder="Titre de l'annonce" required />
+              <textarea name="content" placeholder="Contenu de l'annonce" required></textarea>
+              <input type="text" name="signature" placeholder="Signature" value="Le Proviseur" />
+              <input type="url" name="image_url" placeholder="URL de l'image (optionnel)" />
               <button type="submit">Publier l'annonce</button>
             </form>
           </details>
 
           <h3>Annonces Publiées</h3>
-          <ul class="admin-list">
+          <ul class="admin-list" id="ann-list">
             {% for a in announcements %}
-            <li>
+            <li{% if loop.index > 3 %} class="extra"{% endif %}>
               <span><strong>{{ a.title }}</strong> ({{ a.created_at }})</span>
-              <form
-                action="/api/admin/announcements/delete/{{ a.id }}"
-                method="POST"
-              >
+              <form action="/api/admin/announcements/delete/{{ a.id }}" method="POST">
                 <button type="submit" class="btn-delete">Supprimer</button>
               </form>
             </li>
@@ -72,14 +45,43 @@
             <li>Aucune annonce.</li>
             {% endfor %}
           </ul>
+          {% if announcements|length > 3 %}
+          <button type="button" class="show-more-btn" data-target="ann-list">Voir plus</button>
+          {% endif %}
         </section>
 
         <section class="admin-section">
           <h2>Projets d'Élèves</h2>
 
-          <details class="admin-add"></details>
+          <details class="admin-add">
+            <summary>Nouveau projet</summary>
+            <form action="/api/admin/projects/new" method="POST" class="admin-form">
+              <input type="text" name="title" placeholder="Titre du projet" required />
+              <input type="text" name="student_name" placeholder="Nom de l'élève" required />
+              <textarea name="description" placeholder="Description du projet" required></textarea>
+              <input type="url" name="image_url" placeholder="URL de l'image (optionnel)" />
+              <button type="submit">Publier le projet</button>
+            </form>
+          </details>
+
+          <h3>Projets Publiés</h3>
+          <ul class="admin-list" id="proj-list">
+            {% for p in projects %}
+            <li{% if loop.index > 3 %} class="extra"{% endif %}>
+              <span><strong>{{ p.title }}</strong> par {{ p.student_name }}</span>
+              <form action="/api/admin/projects/delete/{{ p.id }}" method="POST">
+                <button type="submit" class="btn-delete">Supprimer</button>
+              </form>
+            </li>
+            {% else %}
+            <li>Aucun projet.</li>
+            {% endfor %}
+          </ul>
+          {% if projects|length > 3 %}
+          <button type="button" class="show-more-btn" data-target="proj-list">Voir plus</button>
+          {% endif %}
         </section>
-      </div>
-    </main>
-  </body>
-</html>
+
+        <section class="admin-section">
+          <h2>Journaux d'Audit (Connexions)</h2>
+          <ul class="admin-list" id="log-list">
