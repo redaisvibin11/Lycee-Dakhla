@@ -35,6 +35,30 @@
       </nav>
     </header>
 
+    <script src="/static/translations.js"></script>
+
+    <div class="lang-switcher">
+      <button onclick="setLanguage('ar')" class="lang-btn active" id="btn-ar">
+        AR
+      </button>
+      <button onclick="setLanguage('fr')" class="lang-btn" id="btn-fr">
+        FR
+      </button>
+      <button onclick="setLanguage('en')" class="lang-btn" id="btn-en">
+        EN
+      </button>
+    </div>
+
+    <nav class="nav-pill">
+      <a href="#home" data-i18n="nav_home">الرئيسية</a>
+      <a href="#announcements" data-i18n="nav_announcements">الإعلانات</a>
+      <a href="#projects" data-i18n="nav_projects">مشاريع التلاميذ</a>
+      <a href="#najm" data-i18n="nav_najm">نجم AI</a>
+      <a href="/admin" data-i18n="nav_admin">الإدارة</a>
+    </nav>
+
+    <h1 data-i18n="hero_title">مرحباً بكم في ثانوية الداخلة التأهيلية</h1>
+    <p data-i18n="hero_subtitle">منصة التلميذ والتواصل الرقمي ببوجنيبة</p>
     <main class="main-content">
       <section id="overview-section" class="overview">
         <div class="overview-card">

@@ -1,3 +1,33 @@
+function setLanguage(lang) {
+  if (!translations[lang]) return;
+
+  localStorage.setItem("selected_lang", lang);
+
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n");
+    if (translations[lang][key]) {
+      if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+        el.placeholder = translations[lang][key];
+      } else {
+        el.textContent = translations[lang][key];
+      }
+    }
+  });
+
+  document
+    .querySelectorAll(".lang-btn")
+    .forEach((btn) => btn.classList.remove("active"));
+  const activeBtn = document.getElementById(`btn-${lang}`);
+  if (activeBtn) activeBtn.classList.add("active");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const savedLang = localStorage.getItem("selected_lang") || "ar";
+  setLanguage(savedLang);
+});
 document.querySelectorAll(".navBtn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const target = document.getElementById(btn.dataset.target);
