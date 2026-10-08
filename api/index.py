@@ -15,23 +15,26 @@ from google.genai import types
 from authlib.integrations.flask_client import OAuth
 import db
 
-# Ensure Flask locates index.html, admin.html, and style.css correctly on Vercel
-base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
 app = Flask(
-    __name__, template_folder=base_dir, static_folder=base_dir, static_url_path=""
+    __name__, template_folder=root_dir, static_folder=root_dir, static_url_path=""
 )
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default-dev-secret-12345")
 
-# Whitelist allowed emails
-ALLOWED_ADMINS = ["proviseur.lyceedakhla@gmail.com", "your_email@gmail.com"]
 
-# Ensure DB is initialized safely
+ALLOWED_ADMINS = [
+    "proviseur.lyceedakhla@gmail.com",
+    "redaisvibin211@gmail.com",
+]
+
+# Safe DB initialization
 try:
     db.init_db()
 except Exception as e:
-    app.logger.error(f"DB init error: {e}")
+    app.logger.error(f"Database initialization error: {e}")
 
-# OAuth Setup
+# OAuth Configuration
 oauth = OAuth(app)
 google = oauth.register(
     name="google",
@@ -52,12 +55,22 @@ def admin_required(f):
     return decorated_function
 
 
-# Routes
 @app.route("/")
 def index_page():
     return render_template("index.html")
 
 
+@app.route("/api/announcements", methods=["GET"])
+def fetch_announcements():
+    return jsonify(db.get_announcements(10))
+
+
+@app.route("/api/projects", methods=["GET"])
+def fetch_projects():
+    return jsonify(db.get_projects(12))
+
+
+# --- Admin Authentication & Dashboard Routes ---
 @app.route("/admin")
 @admin_required
 def admin_panel():
@@ -101,16 +114,7 @@ def admin_logout():
     return redirect("/")
 
 
-@app.route("/api/announcements", methods=["GET"])
-def fetch_announcements():
-    return jsonify(db.get_announcements(10))
-
-
-@app.route("/api/projects", methods=["GET"])
-def fetch_projects():
-    return jsonify(db.get_projects(12))
-
-
+# --- Admin Post Actions ---
 @app.route("/api/admin/announcements/new", methods=["POST"])
 @admin_required
 def post_announcement():
@@ -151,7 +155,6 @@ def remove_project(item_id):
     return redirect("/admin")
 
 
-# Gemini Najm AI Assistant
 MODEL = "gemini-3.6-flash"
 
 
@@ -164,7 +167,7 @@ def answer():
 
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
-        return jsonify({"error": "Clé API non configurée."}), 500
+        return jsonify({"error": "GEMINI_API_KEY non configurée."}), 500
 
     client = genai.Client(api_key=api_key)
 
@@ -177,22 +180,23 @@ def answer():
             ]
         )
         if announcements
-        else "Aucune annonce."
+        else "Aucune annonce récente."
     )
 
     system_prompt = f"""You are Najm, the friendly AI assistant on the website of Lycée Dakhla in Boujniba, Morocco.
 
 Core Rules:
 1. Answer directly and concisely without introductory meta-commentary.
-2. Only explain who or what you are if explicitly asked.
-3. Respond in the user's language (Arabic, Moroccan Darija, French, English).
+2. Only explain who or what you are if the user explicitly asks about your identity.
+3. Always respond naturally in the language or dialect used by the user (Arabic, Moroccan Darija, French, English).
+4. For questions about school announcements, rely strictly on the active announcements list below.
 
-Annonces récentes:
+Active Announcements:
 {ann_text}
 
 School Facts:
-- Name: Lycée Dakhla in Boujniba, Morocco.
-- Hours: Mon-Sat 08:00-12:00 & 14:00-18:00. Closed Sunday.
+- Name: Lycée Dakhla, a lycée qualifiant in Boujniba, Morocco.
+- Opening hours: Monday to Saturday, 08:00-12:00 and 14:00-18:00. Closed on Sunday.
 """
 
     def generate():
@@ -209,3 +213,14 @@ School Facts:
             yield "Najm est incapable de répondre à cette question."
 
     return Response(generate(), mimetype="text/plain")
+
+
+@app.route("/api/index", methods=["GET"])
+def health():
+    return jsonify(
+        {"status": "ok", "key_loaded": bool(os.environ.get("GEMINI_API_KEY"))}
+    )
+
+
+if __name__ == "__main__":
+    app.run(port=7860, debug=True)
