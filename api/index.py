@@ -1,4 +1,5 @@
 import os
+import sys
 from functools import wraps
 from flask import (
     Flask,
@@ -10,39 +11,44 @@ from flask import (
     url_for,
     render_template,
 )
-from google import genai
-from google.genai import types
-from authlib.integrations.flask_client import OAuth
+
+api_dir = os.path.dirname(__file__)
+if api_dir not in sys.path:
+    sys.path.append(api_dir)
+
 import db
 
-root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+root_dir = os.path.abspath(os.path.join(api_dir, ".."))
 
 app = Flask(
     __name__, template_folder=root_dir, static_folder=root_dir, static_url_path=""
 )
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default-dev-secret-12345")
 
+ALLOWED_ADMINS = ["proviseur.lyceedakhla@gmail.com", "your_email@gmail.com"]
 
-ALLOWED_ADMINS = [
-    "proviseur.lyceedakhla@gmail.com",
-    "redaisvibin211@gmail.com",
-]
-
-# Safe DB initialization
 try:
     db.init_db()
-except Exception as e:
-    app.logger.error(f"Database initialization error: {e}")
+except Exception as err:
+    app.logger.error(f"Database initialization warning: {err}")
 
-# OAuth Configuration
-oauth = OAuth(app)
-google = oauth.register(
-    name="google",
-    client_id=os.environ.get("GOOGLE_CLIENT_ID", ""),
-    client_secret=os.environ.get("GOOGLE_CLIENT_SECRET", ""),
-    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
-    client_kwargs={"scope": "openid email profile"},
-)
+google = None
+try:
+    from authlib.integrations.flask_client import OAuth
+
+    oauth = OAuth(app)
+    client_id = os.environ.get("GOOGLE_CLIENT_ID")
+    client_secret = os.environ.get("GOOGLE_CLIENT_SECRET")
+    if client_id and client_secret:
+        google = oauth.register(
+            name="google",
+            client_id=client_id,
+            client_secret=client_secret,
+            server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+            client_kwargs={"scope": "openid email profile"},
+        )
+except Exception as err:
+    app.logger.error(f"OAuth configuration warning: {err}")
 
 
 def admin_required(f):
@@ -70,7 +76,6 @@ def fetch_projects():
     return jsonify(db.get_projects(12))
 
 
-# --- Admin Authentication & Dashboard Routes ---
 @app.route("/admin")
 @admin_required
 def admin_panel():
@@ -88,12 +93,16 @@ def admin_panel():
 
 @app.route("/admin/login")
 def admin_login():
+    if not google:
+        return "Google OAuth non configuré sur le serveur.", 500
     redirect_uri = url_for("auth_callback", _external=True)
     return google.authorize_redirect(redirect_uri)
 
 
 @app.route("/admin/callback")
 def auth_callback():
+    if not google:
+        return "Google OAuth non configuré.", 500
     token = google.authorize_access_token()
     user_info = token.get("userinfo")
     email = user_info.get("email") if user_info else ""
@@ -114,7 +123,6 @@ def admin_logout():
     return redirect("/")
 
 
-# --- Admin Post Actions ---
 @app.route("/api/admin/announcements/new", methods=["POST"])
 @admin_required
 def post_announcement():
@@ -155,22 +163,21 @@ def remove_project(item_id):
     return redirect("/admin")
 
 
-MODEL = "gemini-3.6-flash"
-
-
 @app.route("/api/index", methods=["POST"])
 def answer():
+    from google import genai
+    from google.genai import types
+
     data = request.get_json(silent=True) or {}
     text = (data.get("text") or "").strip()
     if not text:
-        return jsonify({"error": "Écris d'abord une question pour Najm."}), 400
+        return jsonify({"error": "Écris d'abord une question."}), 400
 
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
-        return jsonify({"error": "GEMINI_API_KEY non configurée."}), 500
+        return jsonify({"error": "Clé API non configurée."}), 500
 
     client = genai.Client(api_key=api_key)
-
     announcements = db.get_announcements(limit=3)
     ann_text = (
         "\n".join(
@@ -183,26 +190,16 @@ def answer():
         else "Aucune annonce récente."
     )
 
-    system_prompt = f"""You are Najm, the friendly AI assistant on the website of Lycée Dakhla in Boujniba, Morocco.
+    system_prompt = f"""You are Najm, the friendly AI assistant for Lycée Dakhla in Boujniba, Morocco.
 
-Core Rules:
-1. Answer directly and concisely without introductory meta-commentary.
-2. Only explain who or what you are if the user explicitly asks about your identity.
-3. Always respond naturally in the language or dialect used by the user (Arabic, Moroccan Darija, French, English).
-4. For questions about school announcements, rely strictly on the active announcements list below.
-
-Active Announcements:
+Annonces récentes:
 {ann_text}
-
-School Facts:
-- Name: Lycée Dakhla, a lycée qualifiant in Boujniba, Morocco.
-- Opening hours: Monday to Saturday, 08:00-12:00 and 14:00-18:00. Closed on Sunday.
 """
 
     def generate():
         try:
             response_stream = client.models.generate_content_stream(
-                model=MODEL,
+                model="gemini-3.6-flash",
                 contents=text,
                 config=types.GenerateContentConfig(system_instruction=system_prompt),
             )
@@ -213,13 +210,6 @@ School Facts:
             yield "Najm est incapable de répondre à cette question."
 
     return Response(generate(), mimetype="text/plain")
-
-
-@app.route("/api/index", methods=["GET"])
-def health():
-    return jsonify(
-        {"status": "ok", "key_loaded": bool(os.environ.get("GEMINI_API_KEY"))}
-    )
 
 
 if __name__ == "__main__":
