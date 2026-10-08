@@ -26,7 +26,7 @@ app = Flask(
 )
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default-dev-secret-12345")
 
-ALLOWED_ADMINS = ["proviseur.lyceedakhla@gmail.com", "your_email@gmail.com"]
+ALLOWED_ADMINS = ["proviseur.lyceedakhla@gmail.com", "redaisvibin211@gmail.com"]
 
 try:
     db.init_db()
