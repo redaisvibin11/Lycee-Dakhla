@@ -33,7 +33,7 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
-ALLOWED_ADMINS = ["proviseur.lyceedakhla@gmail.com", "your_email@gmail.com"]
+ALLOWED_ADMINS = ["proviseur.lyceedakhla@gmail.com", "redaisvibin211@gmail.com"]
 
 try:
     db.init_db()
