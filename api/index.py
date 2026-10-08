@@ -19,9 +19,10 @@ if api_dir not in sys.path:
 import db
 
 root_dir = os.path.abspath(os.path.join(api_dir, ".."))
+template_dir = os.path.join(api_dir, "templates")
 
 app = Flask(
-    __name__, template_folder=root_dir, static_folder=root_dir, static_url_path=""
+    __name__, template_folder=template_dir, static_folder=root_dir, static_url_path=""
 )
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default-dev-secret-12345")
 
