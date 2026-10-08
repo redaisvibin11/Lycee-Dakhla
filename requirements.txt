@@ -1,5 +1,4 @@
-Flask
-Authlib
+flask
+authlib
 requests
 google-genai
-libsql-client
