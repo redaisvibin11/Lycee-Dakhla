@@ -1,6 +1,10 @@
 import os
 import sqlite3
-import libsql_client
+
+try:
+    import libsql_client
+except ImportError:
+    libsql_client = None
 
 DB_NAME = os.path.join(os.path.dirname(__file__), "school.db")
 TURSO_URL = os.environ.get("TURSO_DATABASE_URL")
@@ -8,8 +12,13 @@ TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN")
 
 
 def get_remote_client():
-    if TURSO_URL and TURSO_TOKEN:
-        return libsql_client.create_client_sync(url=TURSO_URL, auth_token=TURSO_TOKEN)
+    if libsql_client and TURSO_URL and TURSO_TOKEN:
+        try:
+            return libsql_client.create_client_sync(
+                url=TURSO_URL, auth_token=TURSO_TOKEN
+            )
+        except Exception as err:
+            print(f"Turso Connection Error: {err}")
     return None
 
 
@@ -22,7 +31,10 @@ def get_local_db():
 def execute_write(query, params=()):
     remote_client = get_remote_client()
     if remote_client:
-        remote_client.execute(query, params)
+        try:
+            remote_client.execute(query, params)
+        except Exception as err:
+            print(f"Turso write error: {err}")
 
     try:
         conn = get_local_db()
@@ -30,15 +42,18 @@ def execute_write(query, params=()):
         conn.commit()
         conn.close()
     except Exception as err:
-        print(f"Local backup write notice: {err}")
+        print(f"Local write error: {err}")
 
 
 def execute_read(query, params=()):
     remote_client = get_remote_client()
     if remote_client:
-        result = remote_client.execute(query, params)
-        columns = result.columns
-        return [dict(zip(columns, row)) for row in result.rows]
+        try:
+            result = remote_client.execute(query, params)
+            columns = result.columns
+            return [dict(zip(columns, row)) for row in result.rows]
+        except Exception as err:
+            print(f"Turso read error: {err}")
 
     conn = get_local_db()
     rows = conn.execute(query, params).fetchall()
@@ -59,7 +74,10 @@ def init_db():
     remote_client = get_remote_client()
     if remote_client:
         for stmt in statements:
-            remote_client.execute(stmt)
+            try:
+                remote_client.execute(stmt)
+            except Exception as err:
+                print(f"Turso init error: {err}")
 
     conn = get_local_db()
     conn.executescript(schema_sql)
