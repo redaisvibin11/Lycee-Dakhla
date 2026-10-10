@@ -35,7 +35,7 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 ALLOWED_ADMINS = [
     "proviseur.lyceedakhla@gmail.com",
-    "angkhadija@gmail.com",
+    "abgkhadija@gmail.com",
     "redaisvibin211@gmail.com",
 ]
 
