@@ -187,7 +187,7 @@ def delete_project(project_id):
 
 # ---------- schedules ----------
 def add_sched(title, class_, image_url=""):
-    query = "INSERT INTO schedules(title, class, image_url) VALUES (?,?,?)"
+    query = "INSERT INTO schedules(title, class_, image_url) VALUES (?,?,?)"
     execute_write(
         query=(
             title,
