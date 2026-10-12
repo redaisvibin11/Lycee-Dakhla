@@ -181,12 +181,16 @@ def remove_project(item_id):
 @app.route("/api/admin/schedules/new", methods=["POST"])
 @admin_required
 def post_schedule():
-    title = request.form.get("title", "").strip()
-    class_ = request.form.get("class_", "").strip()
-    image_url = request.form.get("image_url", "").strip()
-    if title and class_ and image_url:
-        db.add_sched(title, class_, image_url)
-    return redirect("/admin")
+    try:
+        title = request.form.get("title", "").strip()
+        class_ = request.form.get("class_", "").strip()
+        image_url = request.form.get("image_url", "").strip()
+        if title and class_ and image_url:
+            db.add_sched(title, class_, image_url)
+        return redirect("/admin")
+    except Exception as e:
+        app.logger.error(f"Error adding schedule: {e}")
+        return f"Database Error: {e}", 500
 
 
 @app.route("/api/admin/schedules/delete/<int:item_id>", methods=["POST"])
