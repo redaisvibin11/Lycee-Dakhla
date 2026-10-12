@@ -189,14 +189,7 @@ def delete_project(project_id):
 def add_sched(title, class_, image_url=""):
     query = "INSERT INTO schedules(title, class_, image_url) VALUES (?,?,?)"
     execute_write(
-        query=(
-            title,
-            class_,
-            image_url,
-        )
-    )
-
-
+        query=(title,class_,image_url,) )
 def get_sched(limit=3):
     query = (
         " SELECT id ,title, class_, image_url FROM schedules ORDER BY id DESC LIMIT ?"
