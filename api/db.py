@@ -9,7 +9,6 @@ DB_NAME = os.path.join(os.path.dirname(os.path.abspath(__file__)), "school.db")
 TURSO_URL = (os.environ.get("TURSO_DATABASE_URL") or "").strip()
 TURSO_TOKEN = (os.environ.get("TURSO_AUTH_TOKEN") or "").strip()
 
-# libsql:// works for the websocket client; the HTTP API needs https://
 if TURSO_URL.startswith("libsql://"):
     TURSO_URL = "https://" + TURSO_URL[len("libsql://") :]
 TURSO_URL = TURSO_URL.rstrip("/")
@@ -48,10 +47,7 @@ SCHEMA = [
     )""",
 ]
 
-_schema_ready = False
 
-
-# ---------- Turso over HTTP ----------
 def _to_arg(value):
     if value is None:
         return {"type": "null"}
@@ -101,7 +97,6 @@ def _turso_run(sql, params=()):
     return [dict(zip(cols, [_from_cell(c) for c in row])) for row in res["rows"]]
 
 
-# ---------- local SQLite (only for running on your own PC) ----------
 def _local_run(sql, params=()):
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
@@ -129,7 +124,7 @@ def init_db():
     for stmt in SCHEMA:
         try:
             _run(stmt)
-        except Exception as e:
+        except Exception:
             pass
 
 
@@ -143,7 +138,6 @@ def execute_read(query, params=()):
     return _run(query, params)
 
 
-# ---------- audit logs ----------
 def log_audit(email, status, ip_address):
     query = "INSERT INTO audit_logs (email, status, ip_address) VALUES (?, ?, ?)"
     execute_write(query, (email, status, ip_address))
@@ -154,7 +148,6 @@ def get_audit_logs(limit=20):
     return execute_read(query, (limit,))
 
 
-# ---------- announcements ----------
 def add_announcement(title, content, signature="Le Proviseur", image_url=""):
     query = "INSERT INTO announcements (title, content, signature, image_url) VALUES (?, ?, ?, ?)"
     execute_write(query, (title, content, signature, image_url))
@@ -169,7 +162,6 @@ def delete_announcement(announcement_id):
     execute_write("DELETE FROM announcements WHERE id = ?", (announcement_id,))
 
 
-# ---------- projects ----------
 def add_project(title, student_name, description, image_url=""):
     query = "INSERT INTO projects (title, student_name, description, image_url) VALUES (?, ?, ?, ?)"
     execute_write(query, (title, student_name, description, image_url))
@@ -184,21 +176,14 @@ def delete_project(project_id):
     execute_write("DELETE FROM projects WHERE id = ?", (project_id,))
 
 
-# ---------- schedules ----------
 def add_sched(title, class_, image_url=""):
-    query = "INSERT INTO schedules(title, class_, image_url) VALUES (?,?,?)"
-    execute_write(
-        query=(
-            title,
-            class_,
-            image_url,
-        )
-    )
+    query = "INSERT INTO schedules (title, class_, image_url) VALUES (?, ?, ?)"
+    execute_write(query, (title, class_, image_url))
 
 
 def get_sched(limit=3):
     query = (
-        " SELECT id ,title, class_, image_url FROM schedules ORDER BY id DESC LIMIT ?"
+        "SELECT id, title, class_, image_url FROM schedules ORDER BY id DESC LIMIT ?"
     )
     return execute_read(query, (limit,))
 
