@@ -110,7 +110,68 @@
           </p>
         </div>
       </section>
+      <section class="admin-section">
+        <h2>Journaux d'Audit (Connexions)</h2>
+        <ul class="admin-list" id="log-list">
+          {% for l in logs %}
+          <li>
+            <span
+              ><strong>{{ l.email }}</strong> - {{ l.status }}
+              <small>({{ l.ip_address }} at {{ l.timestamp }})</small></span
+            >
+          </li>
+          {% else %}
+          <li>Aucun journal d'audit.</li>
+          {% endfor %}
+        </ul>
+      </section>
 
+      <section class="admin-section">
+        <h2>Emplois du Temps</h2>
+
+        <details class="admin-add">
+          <summary>Nouveau emploi</summary>
+          <form
+            action="/api/admin/schedules/new"
+            method="POST"
+            class="admin-form"
+          >
+            <input
+              type="text"
+              name="title"
+              placeholder="Titre (ex: Emploi TCSF1)"
+              required
+            />
+            <input
+              type="text"
+              name="class_"
+              placeholder="Classe (ex: TCSF1)"
+              required
+            />
+            <input
+              type="url"
+              name="image_url"
+              placeholder="URL de l'image de l'emploi"
+              required
+            />
+            <button type="submit">Publier l'emploi</button>
+          </form>
+        </details>
+
+        <h3>Emplois Publiés</h3>
+        <ul class="admin-list" id="sched-list">
+          {% for s in schedules %}
+          <li>
+            <span><strong>{{ s.title }}</strong> ({{ s.class_ }})</span>
+            <form action="/api/admin/schedules/delete/{{ s.id }}" method="POST">
+              <button type="submit" class="btn-delete">Supprimer</button>
+            </form>
+          </li>
+          {% else %}
+          <li>Aucun emploi du temps.</li>
+          {% endfor %}
+        </ul>
+      </section>
       <section id="chatbot-section" class="chatbot">
         <h2 data-i18n="najm_title">المساعد الذكي - نجم</h2>
         <div id="chatBox">

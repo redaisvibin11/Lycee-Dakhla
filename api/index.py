@@ -93,12 +93,14 @@ def fetch_projects():
 def admin_panel():
     announcements = db.get_announcements(20)
     projects = db.get_projects(20)
+    schedules = db.get_sched(20)
     logs = db.get_audit_logs(20)
     return render_template(
         "admin.html",
         user=session.get("user"),
         announcements=announcements,
         projects=projects,
+        schedules=schedules,
         logs=logs,
     )
 
@@ -173,6 +175,24 @@ def post_project():
 @admin_required
 def remove_project(item_id):
     db.delete_project(item_id)
+    return redirect("/admin")
+
+
+@app.route("/api/admin/schedules/new", methods=["POST"])
+@admin_required
+def post_schedule():
+    title = request.form.get("title", "").strip()
+    class_ = request.form.get("class_", "").strip()
+    image_url = request.form.get("image_url", "").strip()
+    if title and class_ and image_url:
+        db.add_sched(title, class_, image_url)
+    return redirect("/admin")
+
+
+@app.route("/api/admin/schedules/delete/<int:item_id>", methods=["POST"])
+@admin_required
+def remove_schedule(item_id):
+    db.delete_sched(item_id)
     return redirect("/admin")
 
 

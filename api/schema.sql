@@ -26,3 +26,9 @@ CREATE TABLE IF NOT EXISTS projects (
     image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS schedules (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL, 
+    class_ TEXT NOT NULL,
+    image_url TEXT NOT NULL
+)

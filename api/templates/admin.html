@@ -72,6 +72,26 @@
               <form action="/api/admin/projects/delete/{{ p.id }}" method="POST">
                 <button type="submit" class="btn-delete">Supprimer</button>
               </form>
+        <section class="admin-section">
+          <h2>Emplois de temps</h2>
+          <details class="admin-add">
+            <summary>Nouveau emploi</summary>
+            <form action="/api/admin/schedules/new" method="POST" class="admin-form">
+              <input type="text" name="title" placeholder="Emploi de temps TCSF1" required />
+              <input type="text" name="class_" placeholder="TCSF" required/>
+              <input type="text" name="image_url" required/>
+              <button type="submit">Publier l'emploi</button>
+            </form>
+          </details>
+          <h3>Emplois Publiés</h3>
+          <ul class="admin-list">
+          {% for s in schedules %}
+          <li>
+            <span><strong>{{ s.title }}</strong> ({{ s.class_ }})</span>
+            <form action="/api/admin/schedules/delete/{{ s.id }}" method="POST">
+              <button type="submit" class="btn-delete">Supprimer</button>
+            </form>
+          </li>
             </li>
             {% else %}
             <li>Aucun projet.</li>

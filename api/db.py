@@ -40,6 +40,12 @@ SCHEMA = [
         image_url TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )""",
+    """CREATE TABLE IF NOT EXISTS schedules (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        class_ TEXT NOT NULL,
+        image_url TEXT NOT NULL
+    )""",
 ]
 
 _schema_ready = False
@@ -177,3 +183,26 @@ def get_projects(limit=12):
 
 def delete_project(project_id):
     execute_write("DELETE FROM projects WHERE id = ?", (project_id,))
+
+
+# ---------- schedules ----------
+def add_sched(title, class_, image_url=""):
+    query = "INSERT INTO schedules(title, class, image_url) VALUES (?,?,?)"
+    execute_write(
+        query=(
+            title,
+            class_,
+            image_url,
+        )
+    )
+
+
+def get_sched(limit=3):
+    query = (
+        " SELECT id ,title, class_, image_url FROM schedules ORDER BY id DESC LIMIT ?"
+    )
+    return execute_read(query, (limit,))
+
+
+def delete_sched(schedule_id):
+    execute_write("DELETE FROM schedules WHERE id = ?", (schedule_id,))
