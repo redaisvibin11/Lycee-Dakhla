@@ -50,6 +50,9 @@
         >
           مشاريع التلاميذ
         </button>
+        <button class="nav-item navBtn" data-target="schedules-section">
+          Emplois du Temps
+        </button>
         <button
           class="nav-item navBtn"
           data-target="chatbot-section"
@@ -110,12 +113,13 @@
           </p>
         </div>
       </section>
+
       <section id="schedules-section" class="overview">
         <h2 class="section-title">Emplois du Temps</h2>
         <div class="feed-grid">
           {% for s in schedules %}
           <div class="card">
-            <h3>{{ s.title }} - {{ s.class_ }}</h3>
+            <h3>{{ s.title }} ({{ s.class_ }})</h3>
             {% if s.image_url %}
             <img
               src="{{ s.image_url }}"
