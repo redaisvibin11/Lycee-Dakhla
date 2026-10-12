@@ -110,6 +110,25 @@
           </p>
         </div>
       </section>
+      <section id="schedules-section" class="overview">
+        <h2 class="section-title">Emplois du Temps</h2>
+        <div class="feed-grid">
+          {% for s in schedules %}
+          <div class="card">
+            <h3>{{ s.title }} - {{ s.class_ }}</h3>
+            {% if s.image_url %}
+            <img
+              src="{{ s.image_url }}"
+              alt="{{ s.title }}"
+              style="max-width: 100%; border-radius: 8px"
+            />
+            {% endif %}
+          </div>
+          {% else %}
+          <p>Aucun emploi du temps disponible.</p>
+          {% endfor %}
+        </div>
+      </section>
 
       <section id="chatbot-section" class="chatbot">
         <h2 data-i18n="najm_title">المساعد الذكي - نجم</h2>
