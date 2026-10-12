@@ -126,12 +126,11 @@ def _run(sql, params=()):
 
 
 def init_db():
-    global _schema_ready
-    if _schema_ready:
-        return
     for stmt in SCHEMA:
-        _run(stmt)
-    _schema_ready = True
+        try:
+            _run(stmt)
+        except Exception as e:
+            pass
 
 
 def execute_write(query, params=()):
@@ -189,7 +188,14 @@ def delete_project(project_id):
 def add_sched(title, class_, image_url=""):
     query = "INSERT INTO schedules(title, class_, image_url) VALUES (?,?,?)"
     execute_write(
-        query=(title,class_,image_url,) )
+        query=(
+            title,
+            class_,
+            image_url,
+        )
+    )
+
+
 def get_sched(limit=3):
     query = (
         " SELECT id ,title, class_, image_url FROM schedules ORDER BY id DESC LIMIT ?"
