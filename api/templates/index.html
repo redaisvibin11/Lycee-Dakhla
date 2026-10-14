@@ -55,7 +55,11 @@
         >
           مشاريع التلاميذ
         </button>
-        <button class="nav-item navBtn" data-target="schedules-section">
+        <button
+          class="nav-item navBtn"
+          data-target="schedules-section"
+          data-i18n="nav_schedules"
+        >
           Emplois du Temps
         </button>
         <button
@@ -131,7 +135,9 @@
       </section>
 
       <section id="schedules-section" class="overview">
-        <h2 class="section-title">Emplois du Temps</h2>
+        <h2 class="section-title" data-i18n="sec_schedules">
+          Emplois du Temps
+        </h2>
         <div class="feed-grid">
           {% for s in schedules %}
           <div class="card">
@@ -145,7 +151,7 @@
             {% endif %}
           </div>
           {% else %}
-          <p>Aucun emploi du temps disponible.</p>
+          <p data-i18n="no_schedules">Aucun emploi du temps disponible.</p>
           {% endfor %}
         </div>
       </section>
