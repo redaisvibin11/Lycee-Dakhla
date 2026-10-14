@@ -13,11 +13,24 @@ function setLanguage(lang) {
 
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.getAttribute("data-i18n");
-    if (translations[lang][key]) {
+    const newText = translations[lang][key];
+    if (newText) {
       if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
-        el.placeholder = translations[lang][key];
+        el.placeholder = newText;
       } else {
-        el.textContent = translations[lang][key];
+        const img = el.querySelector("img");
+        if (img) {
+          el.childNodes.forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE) {
+              node.textContent =
+                (lang === "ar" ? " " : "") +
+                newText +
+                (lang !== "ar" ? " " : "");
+            }
+          });
+        } else {
+          el.textContent = newText;
+        }
       }
     }
   });

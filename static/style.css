@@ -390,7 +390,9 @@ h3 {
 }
 
 .submit {
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex: none;
   width: 2.75rem;
   height: 2.75rem;
@@ -400,34 +402,26 @@ h3 {
   background: var(--primary);
   color: var(--bg);
   cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease;
 }
 
-.submit::before,
-.submit::after {
-  content: "";
-  position: absolute;
-  left: 50%;
+.submit:hover {
+  opacity: 0.9;
 }
 
-.submit::before {
-  top: 30%;
-  width: 2px;
-  height: 40%;
-  background: currentColor;
-  transform: translateX(-50%);
+.submit:active {
+  transform: scale(0.95);
 }
 
-.submit::after {
-  top: calc(30% + 2px);
-  width: 0.6rem;
-  height: 0.6rem;
-  border-top: 2px solid currentColor;
-  border-left: 2px solid currentColor;
-  transform: translateX(-50%) rotate(45deg);
+.submit svg {
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
-[dir="rtl"] .submit::after {
-  transform: translateX(-50%) rotate(-45deg);
+[dir="rtl"] .submit svg {
+  transform: scaleX(-1);
 }
 
 .typing {
