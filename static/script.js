@@ -18,19 +18,7 @@ function setLanguage(lang) {
       if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
         el.placeholder = newText;
       } else {
-        const img = el.querySelector("img");
-        if (img) {
-          el.childNodes.forEach((node) => {
-            if (node.nodeType === Node.TEXT_NODE) {
-              node.textContent =
-                (lang === "ar" ? " " : "") +
-                newText +
-                (lang !== "ar" ? " " : "");
-            }
-          });
-        } else {
-          el.textContent = newText;
-        }
+        el.textContent = newText;
       }
     }
   });
