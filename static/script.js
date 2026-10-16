@@ -48,6 +48,11 @@ function setLanguage(lang) {
   const activeBtn = document.getElementById(`btn-${lang}`);
   if (activeBtn) activeBtn.classList.add("active");
 }
+document.querySelectorAll(".lang-btn", () => {
+  btn.addEventListener("click", () => {
+    location.reload();
+  });
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("selected_lang") || "ar";
