@@ -1,6 +1,6 @@
 function t(key) {
   const lang = localStorage.getItem("selected_lang") || "ar";
-  return (translations[lang] && translations[lang][key]) || key;
+  return (translations && translations[lang] && translations[lang][key]) || key;
 }
 
 function setLanguage(lang) {
