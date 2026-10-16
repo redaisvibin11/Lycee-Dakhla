@@ -48,8 +48,11 @@ function setLanguage(lang) {
   const activeBtn = document.getElementById(`btn-${lang}`);
   if (activeBtn) activeBtn.classList.add("active");
 }
-document.querySelectorAll(".lang-btn", () => {
+
+document.querySelectorAll(".lang-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
+    const selectedLang = btn.id.replace("btn-", "");
+    localStorage.setItem("selected_lang", selectedLang);
     location.reload();
   });
 });
@@ -133,7 +136,7 @@ function loadAnnouncements() {
     .then((res) => res.json())
     .then((data) => {
       if (!data || data.length === 0) {
-        container.innerHTML = `<p class="loading-text">${t("no_announcements")}</p>`;
+        container.innerHTML = `<p class="loading-text" data-i18n="no_announcements">${t("no_announcements")}</p>`;
         return;
       }
       renderCards(
@@ -151,7 +154,7 @@ function loadAnnouncements() {
       );
     })
     .catch(() => {
-      container.innerHTML = `<p class="loading-text">${t("err_network")}</p>`;
+      container.innerHTML = `<p class="loading-text" data-i18n="err_network">${t("err_network")}</p>`;
     });
 }
 
@@ -163,7 +166,7 @@ function loadProjects() {
     .then((res) => res.json())
     .then((data) => {
       if (!data || data.length === 0) {
-        container.innerHTML = `<p class="loading-text">${t("no_projects")}</p>`;
+        container.innerHTML = `<p class="loading-text" data-i18n="no_projects">${t("no_projects")}</p>`;
         return;
       }
       renderCards(
@@ -181,7 +184,7 @@ function loadProjects() {
       );
     })
     .catch(() => {
-      container.innerHTML = `<p class="loading-text">${t("err_network")}</p>`;
+      container.innerHTML = `<p class="loading-text" data-i18n="err_network">${t("err_network")}</p>`;
     });
 }
 
