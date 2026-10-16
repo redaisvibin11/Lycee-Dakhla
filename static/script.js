@@ -61,8 +61,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("selected_lang") || "ar";
   setLanguage(savedLang);
 
-  loadAnnouncements();
-  loadProjects();
+  document.querySelectorAll(".show-more-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const section = btn.closest("section");
+      const grid = section ? section.querySelector(".feed-grid") : null;
+      if (grid) {
+        const expanded = grid.classList.toggle("expanded");
+        const key = expanded ? "show_less" : "show_more";
+        btn.dataset.i18n = key;
+        btn.textContent = t(key);
+      }
+    });
+  });
 
   const navBtns = document.querySelectorAll(".navBtn");
   navBtns.forEach((btn) => {
@@ -102,90 +112,6 @@ function esc(s) {
         c
       ],
   );
-}
-
-const VISIBLE_CARDS = 3;
-
-function renderCards(container, items, cardHtml) {
-  container.classList.remove("expanded");
-  container.innerHTML = items
-    .map((item, i) => cardHtml(item, i >= VISIBLE_CARDS ? "extra" : ""))
-    .join("");
-
-  if (items.length > VISIBLE_CARDS) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "show-more-btn";
-    btn.dataset.i18n = "show_more";
-    btn.textContent = t("show_more");
-    btn.addEventListener("click", () => {
-      const expanded = container.classList.toggle("expanded");
-      const key = expanded ? "show_less" : "show_more";
-      btn.dataset.i18n = key;
-      btn.textContent = t(key);
-    });
-    container.appendChild(btn);
-  }
-}
-
-function loadAnnouncements() {
-  const container = document.getElementById("announcementsContainer");
-  if (!container) return;
-
-  fetch("/api/announcements")
-    .then((res) => res.json())
-    .then((data) => {
-      if (!data || data.length === 0) {
-        container.innerHTML = `<p class="loading-text" data-i18n="no_announcements">${t("no_announcements")}</p>`;
-        return;
-      }
-      renderCards(
-        container,
-        data,
-        (item, cls) => `
-        <div class="overview-card ${cls}">
-          ${item.image_url ? `<div class="card-media"><img src="${esc(item.image_url)}" alt="${esc(item.title)}" /></div>` : ""}
-          <div class="card-content">
-            <h3>${esc(item.title)}</h3>
-            <p>${esc(item.content)}</p>
-            <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">${esc(item.signature)} &bull; ${new Date(item.created_at).toLocaleDateString()}</small>
-          </div>
-        </div>`,
-      );
-    })
-    .catch(() => {
-      container.innerHTML = `<p class="loading-text" data-i18n="err_network">${t("err_network")}</p>`;
-    });
-}
-
-function loadProjects() {
-  const container = document.getElementById("projectsContainer");
-  if (!container) return;
-
-  fetch("/api/projects")
-    .then((res) => res.json())
-    .then((data) => {
-      if (!data || data.length === 0) {
-        container.innerHTML = `<p class="loading-text" data-i18n="no_projects">${t("no_projects")}</p>`;
-        return;
-      }
-      renderCards(
-        container,
-        data,
-        (item, cls) => `
-        <div class="overview-card ${cls}">
-          ${item.image_url ? `<div class="card-media"><img src="${esc(item.image_url)}" alt="${esc(item.title)}" /></div>` : ""}
-          <div class="card-content">
-            <h3>${esc(item.title)}</h3>
-            <p><strong>${esc(item.student_name)}</strong></p>
-            <p>${esc(item.description)}</p>
-          </div>
-        </div>`,
-      );
-    })
-    .catch(() => {
-      container.innerHTML = `<p class="loading-text" data-i18n="err_network">${t("err_network")}</p>`;
-    });
 }
 
 function appendChatMessage(sender, text) {

@@ -118,20 +118,68 @@
         <h2 class="section-title" data-i18n="sec_announcements">
           الإعلانات الرسمية
         </h2>
-        <div id="announcementsContainer" class="feed-grid">
-          <p class="loading-text" data-i18n="loading_announcements">
-            جاري تحميل الإعلانات...
+        <div class="feed-grid">
+          {% for item in announcements %}
+          <div class="overview-card {% if loop.index > 3 %}extra{% endif %}">
+            {% if item.image_url %}
+            <div class="card-media">
+              <img src="{{ item.image_url }}" alt="{{ item.title }}" />
+            </div>
+            {% endif %}
+            <div class="card-content">
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.content }}</p>
+              <small
+                style="
+                  color: var(--text-muted);
+                  display: block;
+                  margin-top: 0.5rem;
+                "
+              >
+                {{ item.signature }} &bull; {{ item.created_at }}
+              </small>
+            </div>
+          </div>
+          {% else %}
+          <p class="loading-text" data-i18n="no_announcements">
+            لا توجد أية إعلانات حالياً.
           </p>
+          {% endfor %}
         </div>
+        {% if announcements|length > 3 %}
+        <button type="button" class="show-more-btn" data-i18n="show_more">
+          عرض المزيد
+        </button>
+        {% endif %}
       </section>
 
       <section id="gallery-section" class="overview">
         <h2 class="section-title" data-i18n="sec_projects">معرض المشاريع</h2>
-        <div id="projectsContainer" class="feed-grid">
-          <p class="loading-text" data-i18n="loading_projects">
-            جاري تحميل المشاريع...
+        <div class="feed-grid">
+          {% for item in projects %}
+          <div class="overview-card {% if loop.index > 3 %}extra{% endif %}">
+            {% if item.image_url %}
+            <div class="card-media">
+              <img src="{{ item.image_url }}" alt="{{ item.title }}" />
+            </div>
+            {% endif %}
+            <div class="card-content">
+              <h3>{{ item.title }}</h3>
+              <p><strong>{{ item.student_name }}</strong></p>
+              <p>{{ item.description }}</p>
+            </div>
+          </div>
+          {% else %}
+          <p class="loading-text" data-i18n="no_projects">
+            لا توجد أية مشاريع حالياً.
           </p>
+          {% endfor %}
         </div>
+        {% if projects|length > 3 %}
+        <button type="button" class="show-more-btn" data-i18n="show_more">
+          عرض المزيد
+        </button>
+        {% endif %}
       </section>
 
       <section id="schedules-section" class="overview">
@@ -140,20 +188,25 @@
         </h2>
         <div class="feed-grid">
           {% for s in schedules %}
-          <div class="card">
+          <div class="overview-card {% if loop.index > 3 %}extra{% endif %}">
             <h3>{{ s.title }} ({{ s.class_ }})</h3>
             {% if s.image_url %}
-            <img
-              src="{{ s.image_url }}"
-              alt="{{ s.title }}"
-              style="max-width: 100%; border-radius: 8px"
-            />
+            <div class="card-media">
+              <img src="{{ s.image_url }}" alt="{{ s.title }}" />
+            </div>
             {% endif %}
           </div>
           {% else %}
-          <p data-i18n="no_schedules">Aucun emploi du temps disponible.</p>
+          <p class="loading-text" data-i18n="no_schedules">
+            Aucun emploi du temps disponible.
+          </p>
           {% endfor %}
         </div>
+        {% if schedules|length > 3 %}
+        <button type="button" class="show-more-btn" data-i18n="show_more">
+          عرض المزيد
+        </button>
+        {% endif %}
       </section>
 
       <section id="chatbot-section" class="chatbot">

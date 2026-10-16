@@ -88,16 +88,6 @@ def index():
     )
 
 
-@app.route("/api/announcements", methods=["GET"])
-def fetch_announcements():
-    return jsonify(db.get_announcements(10))
-
-
-@app.route("/api/projects", methods=["GET"])
-def fetch_projects():
-    return jsonify(db.get_projects(12))
-
-
 @app.route("/admin")
 @admin_required
 def admin_panel():
