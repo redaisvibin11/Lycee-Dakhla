@@ -99,6 +99,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         navBtns.forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
+        navBtns.forEach((btn) => {
+          if (btn.dataset.target === targetId) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        });
       }
     });
   });
