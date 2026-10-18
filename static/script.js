@@ -1,3 +1,23 @@
+function save() {
+  localStorage.setItem(
+    "theme",
+    document.body.classList.toggle("dark") ? "dark" : "light",
+  );
+}
+const thmBtn = document.getElementById("themBtn");
+thmBtn.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  save();
+});
+function loadTheme() {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+}
+loadTheme();
 function t(key) {
   const lang = localStorage.getItem("selected_lang") || "ar";
   return (translations && translations[lang] && translations[lang][key]) || key;
