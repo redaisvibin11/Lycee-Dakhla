@@ -15,11 +15,11 @@
 }
 
 body.dark {
-  --bg: #17120f;
-  --surface: #221b17;
-  --border: #3a2f28;
-  --text: #f3ece4;
-  --text-muted: #b3a597;
+  --bg: #161311;
+  --surface: #231e1a;
+  --border: #3d342e;
+  --text: #f4efe6;
+  --text-muted: #b5a89c;
   --primary: #e07a52;
   --accent: #e9b44c;
   color-scheme: dark;
