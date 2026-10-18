@@ -4,7 +4,7 @@ function save() {
     document.body.classList.toggle("dark") ? "dark" : "light",
   );
 }
-const thmBtn = document.getElementById("themBtn");
+const thmBtn = document.getElementById("themeBtn");
 thmBtn.addEventListener("click", () => {
   document.body.classList.toggle("dark");
   save();
