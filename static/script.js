@@ -99,8 +99,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
         navBtns.forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
+      }
+    });
+  });
+
+  const sections = document.querySelectorAll("main > section[id]");
+  const observerOptions = {
+    root: null,
+    rootMargin: "-20% 0px -60% 0px",
+    threshold: 0,
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute("id");
         navBtns.forEach((btn) => {
-          if (btn.dataset.target === targetId) {
+          if (btn.getAttribute("data-target") === id) {
             btn.classList.add("active");
           } else {
             btn.classList.remove("active");
@@ -108,28 +123,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     });
-  });
-  const observerOptions = {
-    root: null,
-    rootMargin: "-25% 0px -45% 0px",
-    threshold: 0,
-  };
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting && window.scrollY >= window.innerHeight * 0.15) {
-        setActiveNav(entry.target.id);
-      }
-    });
   }, observerOptions);
 
   sections.forEach((section) => observer.observe(section));
 
-  window.addEventListener("scroll", () => {
-    if (window.scrollY < window.innerHeight * 0.15) {
-      setActiveNav("overview-section");
-    }
-  });
   const submitBtn = document.getElementById("submBtn");
   const inputBox = document.getElementById("inputBox");
   if (submitBtn && inputBox) {
