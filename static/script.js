@@ -109,7 +109,27 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+  const observerOptions = {
+    root: null,
+    rootMargin: "-25% 0px -45% 0px",
+    threshold: 0,
+  };
 
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && window.scrollY >= window.innerHeight * 0.15) {
+        setActiveNav(entry.target.id);
+      }
+    });
+  }, observerOptions);
+
+  sections.forEach((section) => observer.observe(section));
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY < window.innerHeight * 0.15) {
+      setActiveNav("overview-section");
+    }
+  });
   const submitBtn = document.getElementById("submBtn");
   const inputBox = document.getElementById("inputBox");
   if (submitBtn && inputBox) {
