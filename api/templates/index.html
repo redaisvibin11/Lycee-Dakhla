@@ -34,8 +34,20 @@
           </button>
         </div>
 
-        <button id="themeBtn" class="theme-toggle-btn" aria-label="Toggle theme">
-          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <button
+          id="themeBtn"
+          class="theme-toggle-btn"
+          aria-label="Toggle theme"
+        >
+          <svg
+            class="icon-sun"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -46,7 +58,15 @@
             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            class="icon-moon"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
         </button>
@@ -209,4 +229,62 @@
           {% endfor %}
         </div>
         {% if schedules|length > 3 %}
-        <button type="button" class="
+        <button type="button" class="show-more-btn" data-i18n="show_more">
+          عرض المزيد
+        </button>
+        {% endif %}
+      </section>
+
+      <section id="chatbot-section" class="chatbot">
+        <h2 class="section-title" data-i18n="najm_title">
+          المساعد الذكي - نجم
+        </h2>
+        <div id="chatBox">
+          <div class="chat-head">
+            <span>نجم</span>
+            <button
+              id="collapseBtn"
+              class="collapse"
+              data-i18n-aria="chat_collapse"
+              aria-label="تصغير"
+            ></button>
+          </div>
+          <div id="messages" role="log" aria-live="polite">
+            <div class="message najm welcome" data-i18n="najm_welcome">
+              مرحباً! أنا نجم، المساعد الذكي للثانوية. كيف يمكنني مساعدتك اليوم؟
+            </div>
+          </div>
+          <div
+            id="typing"
+            class="typing"
+            role="status"
+            aria-label="نجم يفكر..."
+            hidden
+          >
+            <span></span><span></span><span></span>
+          </div>
+          <div class="composer">
+            <label for="inputBox" class="sr-only">Najm</label>
+            <textarea
+              id="inputBox"
+              rows="1"
+              placeholder="اسأل نجم عن أي شيء يتعلق بالدراسة..."
+              data-i18n="najm_placeholder"
+            ></textarea>
+            <button id="submBtn" class="submit" aria-label="Envoyer">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/translations.js"></script>
+    <script src="/static/script.js"></script>
+  </body>
+</html>

@@ -4,11 +4,7 @@ function save() {
     document.body.classList.toggle("dark") ? "dark" : "light",
   );
 }
-const thmBtn = document.getElementById("themeBtn");
-thmBtn.addEventListener("click", () => {
-  document.body.classList.toggle("dark");
-  save();
-});
+
 function loadTheme() {
   const savedTheme = localStorage.getItem("theme");
   if (savedTheme === "dark") {
@@ -18,6 +14,7 @@ function loadTheme() {
   }
 }
 loadTheme();
+
 function t(key) {
   const lang = localStorage.getItem("selected_lang") || "ar";
   return (translations && translations[lang] && translations[lang][key]) || key;
@@ -68,6 +65,13 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
 document.addEventListener("DOMContentLoaded", () => {
   const savedLang = localStorage.getItem("selected_lang") || "ar";
   setLanguage(savedLang);
+
+  const themeBtn = document.getElementById("themeBtn");
+  if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
+      save();
+    });
+  }
 
   document.querySelectorAll(".show-more-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
