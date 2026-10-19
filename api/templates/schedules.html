@@ -102,12 +102,12 @@
       </nav>
     </header>
 
-    <main class="main-content">
-      <section class="overview">
+    <main class="main-content wide-page">
+      <section class="overview full-width-section">
         <h2 class="section-title" data-i18n="sec_schedules">جداول الحصص</h2>
-        <div class="feed-grid">
+        <div class="cards-grid">
           {% for s in schedules %}
-          <div class="overview-card">
+          <div class="overview-card grid-card">
             <h3>{{ s.title }} ({{ s.class_ }})</h3>
             {% if s.image_url %}
             <div class="card-media">

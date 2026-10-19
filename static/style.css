@@ -244,7 +244,18 @@ body.dark .theme-toggle-btn .icon-moon {
   scroll-margin-top: 110px;
 }
 
-/* Header layout putting title & "View All" link side-by-side on opposite ends */
+/* Wide Page container for dedicated full-grid pages */
+.wide-page {
+  max-width: 78rem;
+  margin: 0 auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.full-width-section {
+  max-width: 100%;
+}
+
 .section-header {
   display: flex;
   align-items: center;
@@ -261,7 +272,6 @@ body.dark .theme-toggle-btn .icon-moon {
   font-size: 1.5rem;
 }
 
-/* Clean, compact blue "View All" link styled like game platform storefront headers */
 .view-all-link {
   display: inline-flex;
   align-items: center;
@@ -312,6 +322,19 @@ body.dark .view-all-link:hover {
   font-size: 1.05rem;
 }
 
+/* Cards Grid for full-page multi-column display */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.grid-card {
+  margin-bottom: 0;
+  height: 100%;
+}
+
 :root.dark .overview-card {
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -322,6 +345,7 @@ body.dark .view-all-link:hover {
 }
 
 .empty-state-large {
+  grid-column: 1 / -1;
   padding: 4rem 2rem;
   text-align: center;
   background: var(--surface);

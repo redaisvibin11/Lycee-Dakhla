@@ -99,14 +99,14 @@
       </nav>
     </header>
 
-    <main class="main-content">
-      <section class="overview">
+    <main class="main-content wide-page">
+      <section class="overview full-width-section">
         <h2 class="section-title" data-i18n="sec_announcements">
           الإعلانات الرسمية
         </h2>
-        <div class="feed-grid">
+        <div class="cards-grid">
           {% for item in announcements %}
-          <div class="overview-card">
+          <div class="overview-card grid-card">
             {% if item.image_url %}
             <div class="card-media">
               <img src="{{ item.image_url }}" alt="{{ item.title }}" />
