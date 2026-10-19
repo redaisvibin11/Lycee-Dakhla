@@ -25,7 +25,7 @@ body.dark {
   color-scheme: dark;
 }
 
-/* Custom Scrollbar Styling (Matches current theme) */
+/* Custom Scrollbar Styling (Dynamically switches based on theme classes/variables) */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border) var(--bg);
