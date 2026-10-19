@@ -108,7 +108,10 @@
         <div class="cards-grid">
           {% for s in schedules %}
           <div class="overview-card grid-card">
-            <h3>{{ s.title }} ({{ s.class_ }})</h3>
+            <div class="card-content">
+              <h3>{{ s.title }}</h3>
+              <p><strong>القسم:</strong> {{ s.class_ }}</p>
+            </div>
             {% if s.image_url %}
             <div class="card-media">
               <img src="{{ s.image_url }}" alt="{{ s.title }}" />
