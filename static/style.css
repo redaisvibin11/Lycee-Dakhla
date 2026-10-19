@@ -25,6 +25,30 @@ body.dark {
   color-scheme: dark;
 }
 
+/* Custom Scrollbar Styling (Matches current theme) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--bg);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
 *,
 *::before,
 *::after {
@@ -244,7 +268,6 @@ body.dark .theme-toggle-btn .icon-moon {
   scroll-margin-top: 110px;
 }
 
-/* Wide Page container for dedicated full-grid pages */
 .wide-page {
   max-width: 78rem;
   margin: 0 auto;
@@ -322,7 +345,6 @@ body.dark .view-all-link:hover {
   font-size: 1.05rem;
 }
 
-/* Cards Grid for full-page multi-column display */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -587,7 +609,6 @@ body.dark .view-all-link:hover {
   }
 }
 
-/* Mobile responsive fixes to ensure wrapped floating navbar never covers content */
 @media (max-width: 680px) {
   .floating-nav-wrapper {
     top: 10px;
