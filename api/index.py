@@ -88,6 +88,24 @@ def index():
     )
 
 
+@app.route("/announcements")
+def all_announcements():
+    announcements = db.get_announcements()
+    return render_template("announcements.html", announcements=announcements)
+
+
+@app.route("/projects")
+def all_projects():
+    projects = db.get_projects()
+    return render_template("projects.html", projects=projects)
+
+
+@app.route("/schedules")
+def all_schedules():
+    schedules = db.get_sched()
+    return render_template("schedules.html", schedules=schedules)
+
+
 @app.route("/admin")
 @admin_required
 def admin_panel():

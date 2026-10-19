@@ -71,41 +71,46 @@
           </svg>
         </button>
 
-        <button
-          class="nav-item active navBtn"
+        <a
+          href="/#overview-section"
+          class="nav-item navBtn"
           data-target="overview-section"
           data-i18n="nav_home"
         >
           الرئيسية
-        </button>
-        <button
+        </a>
+        <a
+          href="/#announcements-section"
           class="nav-item navBtn"
           data-target="announcements-section"
           data-i18n="nav_announcements"
         >
           الإعلانات
-        </button>
-        <button
+        </a>
+        <a
+          href="/#gallery-section"
           class="nav-item navBtn"
           data-target="gallery-section"
           data-i18n="nav_projects"
         >
           مشاريع التلاميذ
-        </button>
-        <button
+        </a>
+        <a
+          href="/#schedules-section"
           class="nav-item navBtn"
           data-target="schedules-section"
           data-i18n="nav_schedules"
         >
-          Emplois du Temps
-        </button>
-        <button
+          جداول الحصص
+        </a>
+        <a
+          href="/#chatbot-section"
           class="nav-item navBtn"
           data-target="chatbot-section"
           data-i18n="nav_najm"
         >
           نجم AI
-        </button>
+        </a>
 
         {% if user %}
         <a href="/admin" class="nav-btn btn-admin" data-i18n="nav_admin"
@@ -167,15 +172,17 @@
             </div>
           </div>
           {% else %}
-          <p class="loading-text" data-i18n="no_announcements">
-            لا توجد أية إعلانات حالياً.
-          </p>
+          <div class="empty-state">
+            <p class="loading-text" data-i18n="no_announcements">
+              لا توجد أية إعلانات حالياً.
+            </p>
+          </div>
           {% endfor %}
         </div>
         {% if announcements|length > 3 %}
-        <button type="button" class="show-more-btn" data-i18n="show_more">
-          عرض المزيد
-        </button>
+        <a href="/announcements" class="show-more-btn" data-i18n="show_more"
+          >عرض المزيد</a
+        >
         {% endif %}
       </section>
 
@@ -196,22 +203,22 @@
             </div>
           </div>
           {% else %}
-          <p class="loading-text" data-i18n="no_projects">
-            لا توجد أية مشاريع حالياً.
-          </p>
+          <div class="empty-state">
+            <p class="loading-text" data-i18n="no_projects">
+              لا توجد أية مشاريع حالياً.
+            </p>
+          </div>
           {% endfor %}
         </div>
         {% if projects|length > 3 %}
-        <button type="button" class="show-more-btn" data-i18n="show_more">
+        <a href="/projects" class="show-more-btn" data-i18n="show_more">
           عرض المزيد
-        </button>
+        </a>
         {% endif %}
       </section>
 
       <section id="schedules-section" class="overview">
-        <h2 class="section-title" data-i18n="sec_schedules">
-          Emplois du Temps
-        </h2>
+        <h2 class="section-title" data-i18n="sec_schedules">جداول الحصص</h2>
         <div class="feed-grid">
           {% for s in schedules %}
           <div class="overview-card {% if loop.index > 3 %}extra{% endif %}">
@@ -223,15 +230,17 @@
             {% endif %}
           </div>
           {% else %}
-          <p class="loading-text" data-i18n="no_schedules">
-            Aucun emploi du temps disponible.
-          </p>
+          <div class="empty-state">
+            <p class="loading-text" data-i18n="no_schedules">
+              لا توجد جداول حصص متاحة حالياً.
+            </p>
+          </div>
           {% endfor %}
         </div>
         {% if schedules|length > 3 %}
-        <button type="button" class="show-more-btn" data-i18n="show_more">
+        <a href="/schedules" class="show-more-btn" data-i18n="show_more">
           عرض المزيد
-        </button>
+        </a>
         {% endif %}
       </section>
 

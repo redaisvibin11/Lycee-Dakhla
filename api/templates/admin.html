@@ -1,131 +1,307 @@
 <!doctype html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Administration - Lycée Dakhla</title>
+    <title>فضاء الإدارة - ثانوية الداخلة</title>
     <link rel="stylesheet" href="/static/style.css" />
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/najm-icon.svg') }}">
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="{{ url_for('static', filename='images/najm-icon.svg') }}"
+    />
   </head>
   <body>
     <header class="floating-nav-wrapper">
       <nav class="floating-nav">
-        <a href="/" class="nav-item">← Retour au site</a>
-        <a href="/admin/logout" class="nav-btn btn-logout">Déconnexion ({{ user }})</a>
+        <div class="lang-switcher">
+          <button
+            onclick="setLanguage('ar')"
+            class="lang-btn active"
+            id="btn-ar"
+          >
+            AR
+          </button>
+          <button onclick="setLanguage('fr')" class="lang-btn" id="btn-fr">
+            FR
+          </button>
+          <button onclick="setLanguage('en')" class="lang-btn" id="btn-en">
+            EN
+          </button>
+        </div>
+
+        <button
+          id="themeBtn"
+          class="theme-toggle-btn"
+          aria-label="Toggle theme"
+        >
+          <svg
+            class="icon-sun"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg
+            class="icon-moon"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <a href="/" class="nav-item navBtn" data-i18n="nav_home">الرئيسية</a>
+        <a
+          href="/announcements"
+          class="nav-item navBtn"
+          data-i18n="nav_announcements"
+          >الإعلانات</a
+        >
+        <a href="/projects" class="nav-item navBtn" data-i18n="nav_projects"
+          >مشاريع التلاميذ</a
+        >
+        <a href="/schedules" class="nav-item navBtn" data-i18n="nav_schedules"
+          >جداول الحصص</a
+        >
+
+        {% if user %}
+        <a href="/admin" class="nav-item active navBtn" data-i18n="nav_admin"
+          >الإدارة</a
+        >
+        <a
+          href="/admin/logout"
+          class="nav-btn btn-logout"
+          data-i18n="nav_logout"
+          >تسجيل الخروج</a
+        >
+        {% else %}
+        <a href="/admin/login" class="nav-btn btn-login" data-i18n="nav_login"
+          >دخول الإدارة</a
+        >
+        {% endif %}
       </nav>
     </header>
 
     <main class="main-content">
       <div class="admin-container">
-        <h1>Espace d'Administration</h1>
+        <h1>فضاء الإدارة</h1>
 
         <section class="admin-section">
-          <h2>Annonces</h2>
+          <h2>الإعلانات</h2>
 
           <details class="admin-add">
-            <summary>Nouvelle annonce</summary>
-            <form action="/api/admin/announcements/new" method="POST" class="admin-form">
-              <input type="text" name="title" placeholder="Titre de l'annonce" required />
-              <textarea name="content" placeholder="Contenu de l'annonce" required></textarea>
-              <input type="text" name="signature" placeholder="Signature" value="Le Proviseur" />
-              <input type="url" name="image_url" placeholder="URL de l'image (optionnel)" />
-              <button type="submit">Publier l'annonce</button>
+            <summary>إعلان جديد</summary>
+            <form
+              action="/api/admin/announcements/new"
+              method="POST"
+              class="admin-form"
+            >
+              <input
+                type="text"
+                name="title"
+                placeholder="عنوان الإعلان"
+                required
+              />
+              <textarea
+                name="content"
+                placeholder="محتوى الإعلان"
+                required
+              ></textarea>
+              <input
+                type="text"
+                name="signature"
+                placeholder="الوقيع / التوقيع"
+                value="السيد المدير"
+              />
+              <input
+                type="url"
+                name="image_url"
+                placeholder="رابط الصورة (اختياري)"
+              />
+              <button type="submit">نشر الإعلان</button>
             </form>
           </details>
 
-          <h3>Annonces Publiées</h3>
+          <h3>الإعلانات المنشورة</h3>
           <ul class="admin-list" id="ann-list">
             {% for a in announcements %}
-            <li{% if loop.index > 3 %} class="extra"{% endif %}>
+            <li {% if loop.index>
+              3 %}class="extra" {% endif %}>
               <span><strong>{{ a.title }}</strong> ({{ a.created_at }})</span>
-              <form action="/api/admin/announcements/delete/{{ a.id }}" method="POST">
-                <button type="submit" class="btn-delete">Supprimer</button>
+              <form
+                action="/api/admin/announcements/delete/{{ a.id }}"
+                method="POST"
+              >
+                <button type="submit" class="btn-delete">حذف</button>
               </form>
             </li>
             {% else %}
-            <li>Aucune annonce.</li>
+            <li>
+              <div class="empty-state"><p>لا توجد إعلانات حالياً.</p></div>
+            </li>
             {% endfor %}
           </ul>
           {% if announcements|length > 3 %}
-          <button type="button" class="show-more-btn" data-target="ann-list">Voir plus</button>
+          <button type="button" class="show-more-btn" data-target="ann-list">
+            عرض المزيد
+          </button>
           {% endif %}
         </section>
 
         <section class="admin-section">
-          <h2>Projets d'Élèves</h2>
+          <h2>مشاريع التلاميذ</h2>
 
           <details class="admin-add">
-            <summary>Nouveau projet</summary>
-            <form action="/api/admin/projects/new" method="POST" class="admin-form">
-              <input type="text" name="title" placeholder="Titre du projet" required />
-              <input type="text" name="student_name" placeholder="Nom de l'élève" required />
-              <textarea name="description" placeholder="Description du projet" required></textarea>
-              <input type="url" name="image_url" placeholder="URL de l'image (optionnel)" />
-              <button type="submit">Publier le projet</button>
+            <summary>مشروع جديد</summary>
+            <form
+              action="/api/admin/projects/new"
+              method="POST"
+              class="admin-form"
+            >
+              <input
+                type="text"
+                name="title"
+                placeholder="عنوان المشروع"
+                required
+              />
+              <input
+                type="text"
+                name="student_name"
+                placeholder="اسم التلميذ"
+                required
+              />
+              <textarea
+                name="description"
+                placeholder="وصف المشروع"
+                required
+              ></textarea>
+              <input
+                type="url"
+                name="image_url"
+                placeholder="رابط الصورة (اختياري)"
+              />
+              <button type="submit">نشر المشروع</button>
             </form>
           </details>
 
-          <h3>Projets Publiés</h3>
+          <h3>المشاريع المنشورة</h3>
           <ul class="admin-list" id="proj-list">
             {% for p in projects %}
-            <li{% if loop.index > 3 %} class="extra"{% endif %}>
-              <span><strong>{{ p.title }}</strong> par {{ p.student_name }}</span>
-              <form action="/api/admin/projects/delete/{{ p.id }}" method="POST">
-                <button type="submit" class="btn-delete">Supprimer</button>
+            <li {% if loop.index>
+              3 %}class="extra" {% endif %}>
+              <span
+                ><strong>{{ p.title }}</strong> بواسطة {{ p.student_name
+                }}</span
+              >
+              <form
+                action="/api/admin/projects/delete/{{ p.id }}"
+                method="POST"
+              >
+                <button type="submit" class="btn-delete">حذف</button>
               </form>
             </li>
             {% else %}
-            <li>Aucun projet.</li>
+            <li>
+              <div class="empty-state"><p>لا توجد مشاريع حالياً.</p></div>
+            </li>
             {% endfor %}
           </ul>
           {% if projects|length > 3 %}
-          <button type="button" class="show-more-btn" data-target="proj-list">Voir plus</button>
+          <button type="button" class="show-more-btn" data-target="proj-list">
+            عرض المزيد
+          </button>
           {% endif %}
         </section>
 
         <section class="admin-section">
-          <h2>Emplois du Temps</h2>
+          <h2>جداول الحصص</h2>
 
           <details class="admin-add">
-            <summary>Nouveau emploi</summary>
-            <form action="/api/admin/schedules/new" method="POST" class="admin-form">
-              <input type="text" name="title" placeholder="Titre (ex: Emploi TCSF1)" required />
-              <input type="text" name="class_" placeholder="Classe (ex: TCSF1)" required />
-              <input type="url" name="image_url" placeholder="URL de l'image" required />
-              <button type="submit">Publier l'emploi</button>
+            <summary>جدول حصص جديد</summary>
+            <form
+              action="/api/admin/schedules/new"
+              method="POST"
+              class="admin-form"
+            >
+              <input
+                type="text"
+                name="title"
+                placeholder="العنوان (مثال: جدول الجذع المشترك)"
+                required
+              />
+              <input
+                type="text"
+                name="class_"
+                placeholder="القسم (مثال: TCSF1)"
+                required
+              />
+              <input
+                type="url"
+                name="image_url"
+                placeholder="رابط صورة الجدول"
+                required
+              />
+              <button type="submit">نشر الجدول</button>
             </form>
           </details>
 
-          <h3>Emplois Publiés</h3>
+          <h3>الجداول المنشورة</h3>
           <ul class="admin-list" id="sched-list">
             {% for s in schedules %}
             <li>
               <span><strong>{{ s.title }}</strong> ({{ s.class_ }})</span>
-              <form action="/api/admin/schedules/delete/{{ s.id }}" method="POST">
-                <button type="submit" class="btn-delete">Supprimer</button>
+              <form
+                action="/api/admin/schedules/delete/{{ s.id }}"
+                method="POST"
+              >
+                <button type="submit" class="btn-delete">حذف</button>
               </form>
             </li>
             {% else %}
-            <li>Aucun emploi du temps.</li>
+            <li>
+              <div class="empty-state"><p>لا توجد جداول حصص متاحة.</p></div>
+            </li>
             {% endfor %}
           </ul>
         </section>
 
         <section class="admin-section">
-          <h2>Journaux d'Audit (Connexions)</h2>
+          <h2>سجل النشاطات (تسجيلات الدخول)</h2>
           <ul class="admin-list" id="log-list">
             {% for l in logs %}
             <li>
-              <span><strong>{{ l.email }}</strong> - {{ l.status }} <small>({{ l.ip_address }} at {{ l.timestamp }})</small></span>
+              <span
+                ><strong>{{ l.email }}</strong> - {{ l.status }}
+                <small>({{ l.ip_address }} في {{ l.timestamp }})</small></span
+              >
             </li>
             {% else %}
-            <li>Aucun journal d'audit.</li>
+            <li>
+              <div class="empty-state"><p>لا توجد سجلات حالياً.</p></div>
+            </li>
             {% endfor %}
           </ul>
         </section>
-
       </div>
     </main>
+    <script src="/static/translations.js"></script>
     <script src="/static/script.js"></script>
   </body>
 </html>
