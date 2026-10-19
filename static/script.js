@@ -1,8 +1,6 @@
 function save() {
-  localStorage.setItem(
-    "theme",
-    document.body.classList.toggle("dark") ? "dark" : "light",
-  );
+  const isDark = document.body.classList.toggle("dark");
+  localStorage.setItem("theme", isDark ? "dark" : "light");
 }
 
 function loadTheme() {
@@ -73,60 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  document.querySelectorAll(".show-more-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const section = btn.closest("section");
-      const grid = section ? section.querySelector(".feed-grid") : null;
-      if (grid) {
-        const expanded = grid.classList.toggle("expanded");
-        const key = expanded ? "show_less" : "show_more";
-        btn.dataset.i18n = key;
-        btn.textContent = t(key);
-      }
-    });
-  });
-
-  const navBtns = document.querySelectorAll(".navBtn");
-  navBtns.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const targetId = btn.getAttribute("data-target");
-      if (!targetId) return;
-
-      const targetSection = document.getElementById(targetId);
-      if (targetSection) {
-        e.preventDefault();
-        targetSection.scrollIntoView({ behavior: "smooth" });
-
-        navBtns.forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-      }
-    });
-  });
-
-  const sections = document.querySelectorAll("main > section[id]");
-  const observerOptions = {
-    root: null,
-    rootMargin: "-20% 0px -60% 0px",
-    threshold: 0,
-  };
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const id = entry.target.getAttribute("id");
-        navBtns.forEach((btn) => {
-          if (btn.getAttribute("data-target") === id) {
-            btn.classList.add("active");
-          } else {
-            btn.classList.remove("active");
-          }
-        });
-      }
-    });
-  }, observerOptions);
-
-  sections.forEach((section) => observer.observe(section));
-
   const submitBtn = document.getElementById("submBtn");
   const inputBox = document.getElementById("inputBox");
   if (submitBtn && inputBox) {
@@ -140,16 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-function esc(s) {
-  return String(s ?? "").replace(
-    /[&<>"']/g,
-    (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
-        c
-      ],
-  );
-}
-
 function appendChatMessage(sender, text) {
   const messagesContainer = document.getElementById("messages");
   if (!messagesContainer) return;
@@ -162,22 +96,50 @@ function appendChatMessage(sender, text) {
   return msgDiv;
 }
 
+function parseAndExecuteNajmActions(fullText) {
+  // Look for action tags like [ACTION:THEME:DARK], [ACTION:LANG:FR], etc.
+  const actionRegex = /\[ACTION:([A-Z_]+)(?::([A-Z_]+))?\]/g;
+  let match;
+  let cleanText = fullText;
+
+  while ((match = actionRegex.exec(fullText)) !== null) {
+    const actionType = match[1];
+    const actionParam = match[2];
+
+    if (actionType === "THEME") {
+      if (actionParam === "DARK" && !document.body.classList.contains("dark")) {
+        save();
+      } else if (
+        actionParam === "LIGHT" &&
+        document.body.classList.contains("dark")
+      ) {
+        save();
+      }
+    } else if (actionType === "LANG") {
+      if (actionParam && ["AR", "FR", "EN"].includes(actionParam)) {
+        setLanguage(actionParam.toLowerCase());
+      }
+    }
+
+    // Strip the action command from the displayed message
+    cleanText = cleanText.replace(match[0], "").trim();
+  }
+
+  return cleanText;
+}
+
 function sendChatMessage() {
   const inputBox = document.getElementById("inputBox");
   if (!inputBox) return;
 
   const message = inputBox.value.trim();
-  if (!message) {
-    alert(t("err_empty_input"));
-    return;
-  }
+  if (!message) return;
 
   appendChatMessage("user", message);
   inputBox.value = "";
 
   const typingEl = document.getElementById("typing");
   if (typingEl) {
-    typingEl.setAttribute("aria-label", t("najm_thinking"));
     typingEl.removeAttribute("hidden");
   }
 
@@ -194,6 +156,7 @@ function sendChatMessage() {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
+      let rawResponseText = "";
       let botMsgDiv = null;
 
       while (true) {
@@ -201,10 +164,14 @@ function sendChatMessage() {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
+        rawResponseText += chunk;
+
+        const processedText = parseAndExecuteNajmActions(rawResponseText);
+
         if (!botMsgDiv) {
-          botMsgDiv = appendChatMessage("najm", chunk);
+          botMsgDiv = appendChatMessage("najm", processedText);
         } else {
-          botMsgDiv.textContent += chunk;
+          botMsgDiv.textContent = processedText;
           const container = document.getElementById("messages");
           if (container) container.scrollTop = container.scrollHeight;
         }

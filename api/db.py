@@ -1,6 +1,5 @@
 import os
 import sqlite3
-
 import requests
 
 IS_VERCEL = bool(os.environ.get("VERCEL"))

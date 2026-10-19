@@ -105,12 +105,12 @@
 
         <section class="admin-section">
           <h2>الإعلانات</h2>
-
           <details class="admin-add">
             <summary>إعلان جديد</summary>
             <form
               action="/api/admin/announcements/new"
               method="POST"
+              enctype="multipart/form-data"
               class="admin-form"
             >
               <input
@@ -130,10 +130,14 @@
                 placeholder="الوقيع / التوقيع"
                 value="السيد المدير"
               />
+              <label style="font-size: 0.85rem; color: var(--text-muted)"
+                >تحميل صورة:</label
+              >
+              <input type="file" name="image_file" accept="image/*" />
               <input
                 type="url"
                 name="image_url"
-                placeholder="رابط الصورة (اختياري)"
+                placeholder="أو لصق رابط الصورة (اختياري)"
               />
               <button type="submit">نشر الإعلان</button>
             </form>
@@ -142,8 +146,7 @@
           <h3>الإعلانات المنشورة</h3>
           <ul class="admin-list" id="ann-list">
             {% for a in announcements %}
-            <li {% if loop.index>
-              3 %}class="extra" {% endif %}>
+            <li>
               <span><strong>{{ a.title }}</strong> ({{ a.created_at }})</span>
               <form
                 action="/api/admin/announcements/delete/{{ a.id }}"
@@ -158,21 +161,16 @@
             </li>
             {% endfor %}
           </ul>
-          {% if announcements|length > 3 %}
-          <button type="button" class="show-more-btn" data-target="ann-list">
-            عرض المزيد
-          </button>
-          {% endif %}
         </section>
 
         <section class="admin-section">
           <h2>مشاريع التلاميذ</h2>
-
           <details class="admin-add">
             <summary>مشروع جديد</summary>
             <form
               action="/api/admin/projects/new"
               method="POST"
+              enctype="multipart/form-data"
               class="admin-form"
             >
               <input
@@ -192,10 +190,14 @@
                 placeholder="وصف المشروع"
                 required
               ></textarea>
+              <label style="font-size: 0.85rem; color: var(--text-muted)"
+                >تحميل صورة:</label
+              >
+              <input type="file" name="image_file" accept="image/*" />
               <input
                 type="url"
                 name="image_url"
-                placeholder="رابط الصورة (اختياري)"
+                placeholder="أو لصق رابط الصورة (اختياري)"
               />
               <button type="submit">نشر المشروع</button>
             </form>
@@ -204,8 +206,7 @@
           <h3>المشاريع المنشورة</h3>
           <ul class="admin-list" id="proj-list">
             {% for p in projects %}
-            <li {% if loop.index>
-              3 %}class="extra" {% endif %}>
+            <li>
               <span
                 ><strong>{{ p.title }}</strong> بواسطة {{ p.student_name
                 }}</span
@@ -223,21 +224,16 @@
             </li>
             {% endfor %}
           </ul>
-          {% if projects|length > 3 %}
-          <button type="button" class="show-more-btn" data-target="proj-list">
-            عرض المزيد
-          </button>
-          {% endif %}
         </section>
 
         <section class="admin-section">
           <h2>جداول الحصص</h2>
-
           <details class="admin-add">
             <summary>جدول حصص جديد</summary>
             <form
               action="/api/admin/schedules/new"
               method="POST"
+              enctype="multipart/form-data"
               class="admin-form"
             >
               <input
@@ -252,11 +248,14 @@
                 placeholder="القسم (مثال: TCSF1)"
                 required
               />
+              <label style="font-size: 0.85rem; color: var(--text-muted)"
+                >تحميل صورة الجدول:</label
+              >
+              <input type="file" name="image_file" accept="image/*" />
               <input
                 type="url"
                 name="image_url"
-                placeholder="رابط صورة الجدول"
-                required
+                placeholder="أو لصق رابط صورة الجدول"
               />
               <button type="submit">نشر الجدول</button>
             </form>

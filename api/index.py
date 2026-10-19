@@ -1,7 +1,9 @@
 import os
 import sys
+import uuid
 from datetime import timedelta
 from functools import wraps
+from werkzeug.utils import secure_filename
 from flask import (
     Flask,
     Response,
@@ -33,6 +35,9 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
+UPLOAD_FOLDER = os.path.join(root_dir, "static", "uploads")
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "svg"}
+
 ALLOWED_ADMINS = [
     "proviseur.lyceedakhla@gmail.com",
     "abgkhadija@gmail.com",
@@ -61,6 +66,31 @@ try:
         )
 except Exception as err:
     app.logger.error(f"OAuth configuration warning: {err}")
+
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def save_uploaded_image(file_storage):
+    if file_storage and allowed_file(file_storage.filename):
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        ext = file_storage.filename.rsplit(".", 1)[1].lower()
+        filename = f"{uuid.uuid4().hex}.{ext}"
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        file_storage.save(filepath)
+        return f"/static/uploads/{filename}"
+    return None
+
+
+def handle_image_input(file_storage, url_string):
+    if file_storage and file_storage.filename != "":
+        saved = save_uploaded_image(file_storage)
+        if saved:
+            return saved
+    if url_string and url_string.strip():
+        return url_string.strip()
+    return ""
 
 
 def admin_required(f):
@@ -162,7 +192,10 @@ def post_announcement():
     title = request.form.get("title", "").strip()
     content = request.form.get("content", "").strip()
     signature = request.form.get("signature", "Le Proviseur").strip()
-    image_url = request.form.get("image_url", "").strip()
+
+    file_storage = request.files.get("image_file")
+    url_input = request.form.get("image_url", "").strip()
+    image_url = handle_image_input(file_storage, url_input)
 
     if title and content:
         db.add_announcement(title, content, signature, image_url)
@@ -182,7 +215,10 @@ def post_project():
     title = request.form.get("title", "").strip()
     student_name = request.form.get("student_name", "").strip()
     description = request.form.get("description", "").strip()
-    image_url = request.form.get("image_url", "").strip()
+
+    file_storage = request.files.get("image_file")
+    url_input = request.form.get("image_url", "").strip()
+    image_url = handle_image_input(file_storage, url_input)
 
     if title and student_name and description:
         db.add_project(title, student_name, description, image_url)
@@ -202,7 +238,11 @@ def post_schedule():
     try:
         title = request.form.get("title", "").strip()
         class_ = request.form.get("class_", "").strip()
-        image_url = request.form.get("image_url", "").strip()
+
+        file_storage = request.files.get("image_file")
+        url_input = request.form.get("image_url", "").strip()
+        image_url = handle_image_input(file_storage, url_input)
+
         if title and class_ and image_url:
             db.add_sched(title, class_, image_url)
         return redirect("/admin")
@@ -245,7 +285,18 @@ def answer():
         else "Aucune annonce récente."
     )
 
-    system_prompt = f"""You are Najm, the friendly AI assistant for Lycée Dakhla in Boujniba, Morocco.
+    system_prompt = f"""You are Najm, the AI assistant for Lycée Dakhla in Boujniba, Morocco. 
+Your creator and developer is Reda.
+
+CRITICAL RULES:
+1. NEVER greet the user (e.g., do not say "Hello", "Hi", "Welcome") unless it is the very first message of a brand new session. Get straight to the point.
+2. If asked who created you, built you, or programmed you, always state that you were created by Reda.
+3. You can control the UI when requested by appending action tags to your response:
+   - [ACTION:THEME:DARK] to switch to dark mode.
+   - [ACTION:THEME:LIGHT] to switch to light mode.
+   - [ACTION:LANG:AR] to switch to Arabic.
+   - [ACTION:LANG:FR] to switch to French.
+   - [ACTION:LANG:EN] to switch to English.
 
 Annonces récentes:
 {ann_text}
