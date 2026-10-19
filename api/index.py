@@ -3,7 +3,6 @@ import sys
 import uuid
 from datetime import timedelta
 from functools import wraps
-from werkzeug.utils import secure_filename
 from flask import (
     Flask,
     Response,
@@ -34,8 +33,8 @@ app.secret_key = os.environ.get(
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = bool(os.environ.get("VERCEL"))
 
-# Vercel has a read-only file system except for /tmp
 IS_VERCEL = bool(os.environ.get("VERCEL"))
 UPLOAD_FOLDER = (
     os.path.join("/tmp", "uploads")
@@ -86,8 +85,10 @@ def save_uploaded_image(file_storage):
             filename = f"{uuid.uuid4().hex}.{ext}"
             filepath = os.path.join(UPLOAD_FOLDER, filename)
             file_storage.save(filepath)
+
             if IS_VERCEL:
                 return ""
+
             return f"/static/uploads/{filename}"
         except Exception as e:
             app.logger.error(f"File save error: {e}")
@@ -133,19 +134,22 @@ def index():
 @app.route("/announcements")
 def all_announcements():
     announcements = db.get_announcements()
-    return render_template("announcements.html", announcements=announcements)
+    user = session.get("user")
+    return render_template("announcements.html", announcements=announcements, user=user)
 
 
 @app.route("/projects")
 def all_projects():
     projects = db.get_projects()
-    return render_template("projects.html", projects=projects)
+    user = session.get("user")
+    return render_template("projects.html", projects=projects, user=user)
 
 
 @app.route("/schedules")
 def all_schedules():
     schedules = db.get_sched()
-    return render_template("schedules.html", schedules=schedules)
+    user = session.get("user")
+    return render_template("schedules.html", schedules=schedules, user=user)
 
 
 @app.route("/admin")
@@ -322,13 +326,11 @@ Your creator and developer is Reda. He is a student in TCSF1 if asked.
 CRITICAL RULES:
 1. NEVER greet the user (e.g., do not say "Hello", "Hi", "Welcome") unless it is the very first message of a brand new session. Get straight to the point.
 2. If asked who created you, built you, or programmed you, always state that you were created by Reda.
-3. **TEACHER ABSENCE CHECK:** When users ask if any teachers are absent, scan the official announcements below for keywords like "absence", "professeur", "تغيب", "استاذ", "grève", "remplaçant", or canceled classes. Summarize which teacher is absent and any instructions provided, summarize the announcements to just the important contents with keeping the general context
-4.check schedules if prompted and give accurate information to the user.
-5.check projects and give summaries with pictures if asked only.
-6. You can control the UI when requested by appending action tags to your response:
+3. **TEACHER ABSENCE CHECK:** When users ask if any teachers are absent, scan the official announcements below for keywords like "absence", "professeur", "تغيب", "استاذ", "grève", "remplaçant", or canceled classes. Summarize which teacher is absent and any instructions provided.
+4. You can control the UI when requested by appending action tags to your response:
    - [ACTION:THEME:DARK] / [ACTION:THEME:LIGHT]
    - [ACTION:LANG:AR] / [ACTION:LANG:FR] / [ACTION:LANG:EN]
-7. Reply appropriately and professionally to every prompt.
+5. Reply appropriately and professionally to every prompt.
 
 --- LIVE DATABASE CONTEXT ---
 [الإعلانات الرسمية / Official Announcements]:
