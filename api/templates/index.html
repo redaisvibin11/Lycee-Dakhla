@@ -146,9 +146,16 @@
       </section>
 
       <section id="announcements-section" class="overview">
-        <h2 class="section-title" data-i18n="sec_announcements">
-          الإعلانات الرسمية
-        </h2>
+        <div class="section-header">
+          <h2 class="section-title" data-i18n="sec_announcements">
+            الإعلانات الرسمية
+          </h2>
+          {% if announcements|length > 3 %}
+          <a href="/announcements" class="show-more-btn" data-i18n="show_more"
+            >عرض المزيد</a
+          >
+          {% endif %}
+        </div>
         <div class="feed-grid">
           {% for item in announcements %}
           <div class="overview-card {% if loop.index > 3 %}extra{% endif %}">
@@ -172,22 +179,24 @@
             </div>
           </div>
           {% else %}
-          <div class="empty-state">
+          <div class="empty-state-large">
             <p class="loading-text" data-i18n="no_announcements">
               لا توجد أية إعلانات حالياً.
             </p>
           </div>
           {% endfor %}
         </div>
-        {% if announcements|length > 3 %}
-        <a href="/announcements" class="show-more-btn" data-i18n="show_more"
-          >عرض المزيد</a
-        >
-        {% endif %}
       </section>
 
       <section id="gallery-section" class="overview">
-        <h2 class="section-title" data-i18n="sec_projects">معرض المشاريع</h2>
+        <div class="section-header">
+          <h2 class="section-title" data-i18n="sec_projects">معرض المشاريع</h2>
+          {% if projects|length > 3 %}
+          <a href="/projects" class="show-more-btn" data-i18n="show_more">
+            عرض المزيد
+          </a>
+          {% endif %}
+        </div>
         <div class="feed-grid">
           {% for item in projects %}
           <div class="overview-card {% if loop.index > 3 %}extra{% endif %}">
@@ -203,22 +212,24 @@
             </div>
           </div>
           {% else %}
-          <div class="empty-state">
+          <div class="empty-state-large">
             <p class="loading-text" data-i18n="no_projects">
               لا توجد أية مشاريع حالياً.
             </p>
           </div>
           {% endfor %}
         </div>
-        {% if projects|length > 3 %}
-        <a href="/projects" class="show-more-btn" data-i18n="show_more">
-          عرض المزيد
-        </a>
-        {% endif %}
       </section>
 
       <section id="schedules-section" class="overview">
-        <h2 class="section-title" data-i18n="sec_schedules">جداول الحصص</h2>
+        <div class="section-header">
+          <h2 class="section-title" data-i18n="sec_schedules">جداول الحصص</h2>
+          {% if schedules|length > 3 %}
+          <a href="/schedules" class="show-more-btn" data-i18n="show_more">
+            عرض المزيد
+          </a>
+          {% endif %}
+        </div>
         <div class="feed-grid">
           {% for s in schedules %}
           <div class="overview-card {% if loop.index > 3 %}extra{% endif %}">
@@ -230,18 +241,13 @@
             {% endif %}
           </div>
           {% else %}
-          <div class="empty-state">
+          <div class="empty-state-large">
             <p class="loading-text" data-i18n="no_schedules">
               لا توجد جداول حصص متاحة حالياً.
             </p>
           </div>
           {% endfor %}
         </div>
-        {% if schedules|length > 3 %}
-        <a href="/schedules" class="show-more-btn" data-i18n="show_more">
-          عرض المزيد
-        </a>
-        {% endif %}
       </section>
 
       <section id="chatbot-section" class="chatbot">

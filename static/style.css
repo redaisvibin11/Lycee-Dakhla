@@ -180,7 +180,6 @@ body.dark .theme-toggle-btn .icon-moon {
   color: var(--text);
 }
 
-/* Distinct active state background/tint highlight */
 .nav-item.active {
   background-color: var(--primary);
   color: #ffffff;
@@ -245,10 +244,52 @@ body.dark .theme-toggle-btn .icon-moon {
   scroll-margin-top: 110px;
 }
 
+/* Section Header alignment for title & view more button side-by-side */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.section-header .section-title {
+  margin-bottom: 0;
+}
+
 .section-title {
   color: var(--accent);
-  margin-bottom: 1rem;
   font-size: 1.5rem;
+}
+
+/* Compact blue button on the opposite side */
+.show-more-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: 0.65rem;
+  background-color: rgba(31, 77, 92, 0.1);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.show-more-btn:hover {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+body.dark .show-more-btn {
+  background-color: rgba(233, 180, 76, 0.12);
+}
+
+body.dark .show-more-btn:hover {
+  background-color: var(--accent);
+  color: #161311;
 }
 
 .overview-card {
@@ -279,17 +320,7 @@ body.dark .theme-toggle-btn .icon-moon {
     inset 0 -1px 1px rgba(0, 0, 0, 0.5);
 }
 
-/* Big empty state messages */
-.empty-state {
-  padding: 2rem;
-  text-align: center;
-  background: var(--surface);
-  border: 1px dashed var(--border);
-  border-radius: 1.25rem;
-  color: var(--text-muted);
-  font-size: 1.1rem;
-}
-
+/* Big empty state notice */
 .empty-state-large {
   padding: 4rem 2rem;
   text-align: center;
@@ -299,6 +330,7 @@ body.dark .theme-toggle-btn .icon-moon {
   color: var(--text-muted);
   font-size: 1.25rem;
   font-family: var(--font-head);
+  margin-bottom: 1.25rem;
 }
 
 .card-media {
@@ -653,25 +685,4 @@ body.dark .theme-toggle-btn .icon-moon {
 .admin-list:not(.expanded) li.extra,
 .feed-grid:not(.expanded) .extra {
   display: none;
-}
-
-.show-more-btn {
-  display: block;
-  margin: 1rem auto 0;
-  padding: 0.6rem 1.6rem;
-  border: 1px solid var(--border);
-  border-radius: 0.9rem;
-  background: var(--surface);
-  color: var(--accent);
-  text-decoration: none;
-  text-align: center;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.show-more-btn:hover {
-  border-color: var(--accent);
-  background: rgba(233, 180, 76, 0.08);
 }
