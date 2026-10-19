@@ -25,10 +25,10 @@ body.dark {
   color-scheme: dark;
 }
 
-/* Custom Scrollbar Styling (Dynamically switches based on theme classes/variables) */
+/* Custom Scrollbar Styling (Adapts to Light & Dark Themes) */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--border) var(--bg);
+  scrollbar-color: var(--border) var(--surface);
 }
 
 ::-webkit-scrollbar {
@@ -37,7 +37,7 @@ body.dark {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: var(--surface);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -46,7 +46,7 @@ body.dark {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: var(--primary);
 }
 
 *,
@@ -457,7 +457,7 @@ body.dark .view-all-link:hover {
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  scrollbar-color: var(--border) var(--surface);
 }
 
 .message {
