@@ -83,7 +83,7 @@ def save_uploaded_image(file_storage):
             blob_token = os.environ.get("BLOB_READ_WRITE_TOKEN")
             if IS_VERCEL and blob_token:
                 file_bytes = file_storage.read()
-                resp = requests.post(
+                resp = requests.put(
                     f"https://blob.vercel-storage.com/{filename}",
                     headers={
                         "Authorization": f"Bearer {blob_token}",
@@ -95,6 +95,10 @@ def save_uploaded_image(file_storage):
                 if resp.status_code == 200:
                     data = resp.json()
                     return data.get("url", "")
+                else:
+                    app.logger.error(
+                        f"Vercel Blob error {resp.status_code}: {resp.text}"
+                    )
 
             os.makedirs(UPLOAD_FOLDER, exist_ok=True)
             filepath = os.path.join(UPLOAD_FOLDER, filename)
