@@ -1,6 +1,7 @@
 import os
 import sys
 import uuid
+import requests
 from datetime import timedelta
 from functools import wraps
 from flask import (
@@ -36,11 +37,7 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = bool(os.environ.get("VERCEL"))
 
 IS_VERCEL = bool(os.environ.get("VERCEL"))
-UPLOAD_FOLDER = (
-    os.path.join("/tmp", "uploads")
-    if IS_VERCEL
-    else os.path.join(root_dir, "static", "uploads")
-)
+UPLOAD_FOLDER = os.path.join(root_dir, "static", "uploads")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "svg"}
 
 ALLOWED_ADMINS = [
@@ -80,15 +77,31 @@ def allowed_file(filename):
 def save_uploaded_image(file_storage):
     if file_storage and allowed_file(file_storage.filename):
         try:
-            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
             ext = file_storage.filename.rsplit(".", 1)[1].lower()
             filename = f"{uuid.uuid4().hex}.{ext}"
+
+            # If Vercel Blob token is available, upload directly to Vercel Blob cloud storage
+            blob_token = os.environ.get("BLOB_READ_WRITE_TOKEN")
+            if IS_VERCEL and blob_token:
+                file_bytes = file_storage.read()
+                resp = requests.post(
+                    f"https://blob.vercel-storage.com/{filename}",
+                    headers={
+                        "Authorization": f"Bearer {blob_token}",
+                        "x-access": "public",
+                    },
+                    data=file_bytes,
+                    timeout=15,
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    return data.get("url", "")
+
+            # Fallback for local development
+            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
             filepath = os.path.join(UPLOAD_FOLDER, filename)
+            file_storage.seek(0)
             file_storage.save(filepath)
-
-            if IS_VERCEL:
-                return f"/static/uploads/{filename}"
-
             return f"/static/uploads/{filename}"
         except Exception as e:
             app.logger.error(f"File save error: {e}")
