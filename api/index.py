@@ -87,7 +87,7 @@ def save_uploaded_image(file_storage):
             file_storage.save(filepath)
 
             if IS_VERCEL:
-                return ""
+                return f"/static/uploads/{filename}"
 
             return f"/static/uploads/{filename}"
         except Exception as e:
