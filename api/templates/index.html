@@ -150,15 +150,13 @@
           <h2 class="section-title" data-i18n="sec_announcements">
             الإعلانات الرسمية
           </h2>
-          {% if announcements|length > 3 %}
-          <a href="/announcements" class="show-more-btn" data-i18n="show_more"
-            >عرض المزيد</a
+          <a href="/announcements" class="view-all-link" data-i18n="show_more"
+            >عرض الكل</a
           >
-          {% endif %}
         </div>
         <div class="feed-grid">
           {% for item in announcements %}
-          <div class="overview-card {% if loop.index > 3 %}extra{% endif %}">
+          <div class="overview-card">
             {% if item.image_url %}
             <div class="card-media">
               <img src="{{ item.image_url }}" alt="{{ item.title }}" />
@@ -191,15 +189,13 @@
       <section id="gallery-section" class="overview">
         <div class="section-header">
           <h2 class="section-title" data-i18n="sec_projects">معرض المشاريع</h2>
-          {% if projects|length > 3 %}
-          <a href="/projects" class="show-more-btn" data-i18n="show_more">
-            عرض المزيد
-          </a>
-          {% endif %}
+          <a href="/projects" class="view-all-link" data-i18n="show_more"
+            >عرض الكل</a
+          >
         </div>
         <div class="feed-grid">
           {% for item in projects %}
-          <div class="overview-card {% if loop.index > 3 %}extra{% endif %}">
+          <div class="overview-card">
             {% if item.image_url %}
             <div class="card-media">
               <img src="{{ item.image_url }}" alt="{{ item.title }}" />
@@ -224,15 +220,13 @@
       <section id="schedules-section" class="overview">
         <div class="section-header">
           <h2 class="section-title" data-i18n="sec_schedules">جداول الحصص</h2>
-          {% if schedules|length > 3 %}
-          <a href="/schedules" class="show-more-btn" data-i18n="show_more">
-            عرض المزيد
-          </a>
-          {% endif %}
+          <a href="/schedules" class="view-all-link" data-i18n="show_more"
+            >عرض الكل</a
+          >
         </div>
         <div class="feed-grid">
           {% for s in schedules %}
-          <div class="overview-card {% if loop.index > 3 %}extra{% endif %}">
+          <div class="overview-card">
             <h3>{{ s.title }} ({{ s.class_ }})</h3>
             {% if s.image_url %}
             <div class="card-media">

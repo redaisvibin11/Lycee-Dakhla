@@ -244,7 +244,7 @@ body.dark .theme-toggle-btn .icon-moon {
   scroll-margin-top: 110px;
 }
 
-/* Section Header alignment for title & view more button side-by-side */
+/* Header layout putting title & "View All" link side-by-side on opposite ends */
 .section-header {
   display: flex;
   align-items: center;
@@ -261,16 +261,16 @@ body.dark .theme-toggle-btn .icon-moon {
   font-size: 1.5rem;
 }
 
-/* Compact blue button on the opposite side */
-.show-more-btn {
+/* Clean, compact blue "View All" link styled like game platform storefront headers */
+.view-all-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.35rem 0.85rem;
-  border-radius: 0.65rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 0.6rem;
   background-color: rgba(31, 77, 92, 0.1);
   color: var(--accent);
-  border: 1px solid var(--accent);
+  border: 1px solid rgba(31, 77, 92, 0.3);
   font-size: 0.85rem;
   font-weight: 700;
   text-decoration: none;
@@ -278,16 +278,17 @@ body.dark .theme-toggle-btn .icon-moon {
   white-space: nowrap;
 }
 
-.show-more-btn:hover {
+.view-all-link:hover {
   background-color: var(--accent);
   color: #ffffff;
 }
 
-body.dark .show-more-btn {
+body.dark .view-all-link {
   background-color: rgba(233, 180, 76, 0.12);
+  border-color: rgba(233, 180, 76, 0.3);
 }
 
-body.dark .show-more-btn:hover {
+body.dark .view-all-link:hover {
   background-color: var(--accent);
   color: #161311;
 }
@@ -320,7 +321,6 @@ body.dark .show-more-btn:hover {
     inset 0 -1px 1px rgba(0, 0, 0, 0.5);
 }
 
-/* Big empty state notice */
 .empty-state-large {
   padding: 4rem 2rem;
   text-align: center;
@@ -680,9 +680,4 @@ body.dark .show-more-btn:hover {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 1rem;
-}
-
-.admin-list:not(.expanded) li.extra,
-.feed-grid:not(.expanded) .extra {
-  display: none;
 }
