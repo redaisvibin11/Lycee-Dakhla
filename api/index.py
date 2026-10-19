@@ -35,7 +35,13 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
-UPLOAD_FOLDER = os.path.join(root_dir, "static", "uploads")
+# Vercel has a read-only file system except for /tmp
+IS_VERCEL = bool(os.environ.get("VERCEL"))
+UPLOAD_FOLDER = (
+    os.path.join("/tmp", "uploads")
+    if IS_VERCEL
+    else os.path.join(root_dir, "static", "uploads")
+)
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "svg"}
 
 ALLOWED_ADMINS = [
@@ -74,12 +80,18 @@ def allowed_file(filename):
 
 def save_uploaded_image(file_storage):
     if file_storage and allowed_file(file_storage.filename):
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        ext = file_storage.filename.rsplit(".", 1)[1].lower()
-        filename = f"{uuid.uuid4().hex}.{ext}"
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-        file_storage.save(filepath)
-        return f"/static/uploads/{filename}"
+        try:
+            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+            ext = file_storage.filename.rsplit(".", 1)[1].lower()
+            filename = f"{uuid.uuid4().hex}.{ext}"
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            file_storage.save(filepath)
+            if IS_VERCEL:
+                return ""
+            return f"/static/uploads/{filename}"
+        except Exception as e:
+            app.logger.error(f"File save error: {e}")
+            return ""
     return None
 
 
