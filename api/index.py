@@ -80,7 +80,6 @@ def save_uploaded_image(file_storage):
             ext = file_storage.filename.rsplit(".", 1)[1].lower()
             filename = f"{uuid.uuid4().hex}.{ext}"
 
-            # If Vercel Blob token is available, upload directly to Vercel Blob cloud storage
             blob_token = os.environ.get("BLOB_READ_WRITE_TOKEN")
             if IS_VERCEL and blob_token:
                 file_bytes = file_storage.read()
@@ -97,7 +96,6 @@ def save_uploaded_image(file_storage):
                     data = resp.json()
                     return data.get("url", "")
 
-            # Fallback for local development
             os.makedirs(UPLOAD_FOLDER, exist_ok=True)
             filepath = os.path.join(UPLOAD_FOLDER, filename)
             file_storage.seek(0)
@@ -272,7 +270,7 @@ def post_schedule():
         url_input = request.form.get("image_url", "").strip()
         image_url = handle_image_input(file_storage, url_input)
 
-        if title and class_ and image_url:
+        if title and class_:
             db.add_sched(title, class_, image_url)
         return redirect("/admin")
     except Exception as e:
