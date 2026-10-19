@@ -180,7 +180,7 @@ def add_sched(title, class_, image_url=""):
     execute_write(query, (title, class_, image_url))
 
 
-def get_sched(limit=3):
+def get_sched(limit=10):
     query = (
         "SELECT id, title, class_, image_url FROM schedules ORDER BY id DESC LIMIT ?"
     )

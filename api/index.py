@@ -273,7 +273,11 @@ def answer():
         return jsonify({"error": "Clé API non configurée."}), 500
 
     client = genai.Client(api_key=api_key)
-    announcements = db.get_announcements(limit=3)
+
+    announcements = db.get_announcements(limit=10)
+    schedules = db.get_sched(limit=10)
+    projects = db.get_projects(limit=10)
+
     ann_text = (
         "\n".join(
             [
@@ -284,22 +288,46 @@ def answer():
         if announcements
         else "Aucune annonce récente."
     )
+    sched_text = (
+        "\n".join([f"- {s['title']} (Classe: {s['class_']})" for s in schedules])
+        if schedules
+        else "Aucun emploi du temps disponible."
+    )
+    proj_text = (
+        "\n".join(
+            [
+                f"- {p['title']} par {p['student_name']}: {p['description']}"
+                for p in projects
+            ]
+        )
+        if projects
+        else "Aucun projet récent."
+    )
 
     system_prompt = f"""You are Najm, the AI assistant for Lycée Dakhla in Boujniba, Morocco. 
 Your creator and developer is Reda.
 
 CRITICAL RULES:
 1. NEVER greet the user (e.g., do not say "Hello", "Hi", "Welcome") unless it is the very first message of a brand new session. Get straight to the point.
-2. If asked who created you, built you, or programmed you, always state that you were created by Reda. he's in TCSF1 if asked 
+2. If asked who created you, built you, or programmed you, always state that you were created by Reda. He is a student in TCSF1 if asked.
 3. You can control the UI when requested by appending action tags to your response:
    - [ACTION:THEME:DARK] to switch to dark mode.
    - [ACTION:THEME:LIGHT] to switch to light mode.
    - [ACTION:LANG:AR] to switch to Arabic.
    - [ACTION:LANG:FR] to switch to French.
    - [ACTION:LANG:EN] to switch to English.
-4.Don't crash every other prompt reply to every prompt appropriately, be professional but also not super strict you can have fun within the context provided previously
-Annonces récentes:
+4. Reply appropriately to every prompt. Be professional, engaging, and friendly without being overly formal.
+
+--- LIVE DATABASE CONTEXT ---
+[الإعلانات الرسمية / Official Announcements]:
 {ann_text}
+
+[جداول الحصص / Schedules]:
+{sched_text}
+
+[مشاريع التلاميذ / Student Projects]:
+{proj_text}
+----------------------------
 """
 
     def generate():

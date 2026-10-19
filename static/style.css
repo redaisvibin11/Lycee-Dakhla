@@ -761,3 +761,46 @@ body.dark .view-all-link:hover {
   border: 1px solid var(--border);
   border-radius: 1rem;
 }
+
+.admin-form input[type="file"] {
+  background-color: var(--bg-card, #1a1a1a);
+  color: var(--text-muted, #a0a0a0);
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-form input[type="file"]:hover {
+  border-color: var(--accent-color, #e07a5f);
+}
+
+.admin-form input[type="file"]::file-selector-button {
+  background-color: var(--accent-color, #e07a5f);
+  color: #ffffff;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  margin-right: 0.8rem;
+  margin-left: 0.4rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease;
+}
+
+.admin-form input[type="file"]::file-selector-button:hover {
+  opacity: 0.9;
+}
+
+.admin-form input[type="file"]::file-selector-button:active {
+  transform: scale(0.97);
+}
