@@ -81,7 +81,7 @@ def save_uploaded_image(file_storage):
             filename = f"{uuid.uuid4().hex}.{ext}"
 
             blob_token = os.environ.get("BLOB_READ_WRITE_TOKEN")
-            if IS_VERCEL and blob_token:
+            if blob_token:
                 file_bytes = file_storage.read()
                 resp = requests.put(
                     f"https://blob.vercel-storage.com/{filename}",
@@ -100,8 +100,9 @@ def save_uploaded_image(file_storage):
                         f"Vercel Blob error {resp.status_code}: {resp.text}"
                     )
 
-            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            local_upload_dir = os.path.join(root_dir, "static", "uploads")
+            os.makedirs(local_upload_dir, exist_ok=True)
+            filepath = os.path.join(local_upload_dir, filename)
             file_storage.seek(0)
             file_storage.save(filepath)
             return f"/static/uploads/{filename}"
