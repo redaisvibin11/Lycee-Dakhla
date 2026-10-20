@@ -82,7 +82,35 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  const modalHTML = `
+    <div id="imageModal" class="zoom-modal" onclick="closeImageModal()">
+        <span class="zoom-close">&times;</span>
+        <img class="zoom-modal-content" id="zoomedImg">
+    </div>
+  `;
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+  const modal = document.getElementById("imageModal");
+  const modalImg = document.getElementById("zoomedImg");
+  const images = document.querySelectorAll(".card-media img");
+
+  images.forEach((img) => {
+    img.classList.add("zoomable");
+    img.addEventListener("click", (e) => {
+      e.stopPropagation();
+      modal.style.display = "flex";
+      modal.style.justifyContent = "center";
+      modal.style.alignItems = "center";
+      modalImg.src = img.src;
+    });
+  });
 });
+
+function closeImageModal() {
+  const modal = document.getElementById("imageModal");
+  if (modal) modal.style.display = "none";
+}
 
 function appendChatMessage(sender, text) {
   const messagesContainer = document.getElementById("messages");
@@ -97,7 +125,6 @@ function appendChatMessage(sender, text) {
 }
 
 function parseAndExecuteNajmActions(fullText) {
-  // Look for action tags like [ACTION:THEME:DARK], [ACTION:LANG:FR], etc.
   const actionRegex = /\[ACTION:([A-Z_]+)(?::([A-Z_]+))?\]/g;
   let match;
   let cleanText = fullText;
@@ -121,7 +148,6 @@ function parseAndExecuteNajmActions(fullText) {
       }
     }
 
-    // Strip the action command from the displayed message
     cleanText = cleanText.replace(match[0], "").trim();
   }
 

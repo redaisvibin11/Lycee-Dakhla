@@ -804,3 +804,64 @@ body.dark .view-all-link:hover {
 .admin-form input[type="file"]::file-selector-button:active {
   transform: scale(0.97);
 }
+
+.zoom-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.9);
+  cursor: zoom-out;
+}
+
+.zoom-modal-content {
+  margin: auto;
+  display: block;
+  max-width: 90%;
+  max-height: 85vh;
+  border-radius: 8px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+  animation: zoomIn 0.25s ease;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.zoom-close {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.zoom-close:hover,
+.zoom-close:focus {
+  color: #bbb;
+  text-decoration: none;
+}
+
+.card-media img.zoomable {
+  cursor: zoom-in;
+  transition: transform 0.2s;
+}
+
+.card-media img.zoomable:hover {
+  opacity: 0.95;
+}
