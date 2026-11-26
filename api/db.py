@@ -119,7 +119,7 @@ def _run(sql, params=()):
     return _local_run(sql, params)
 
 
-def init_db():
+def init_db(): 
     for stmt in SCHEMA:
         try:
             _run(stmt)
